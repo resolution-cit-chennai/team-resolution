@@ -3,12 +3,16 @@
 // Phone numbers shown in the footer "Questions?" block.
 export const CONTACT_NUMBERS = [
   {
-    label: "Recruitment",
-    number: import.meta.env.VITE_RECRUITMENT_PHONE || "+91 00000 00000",
+    label: "Dharshu - The Cam Soori",
+    number: import.meta.env.VITE_QUERY_PHONE_1 || "+91 00000 00000",
   },
   {
-    label: "General queries",
-    number: import.meta.env.VITE_GENERAL_QUERIES_PHONE || "+91 00000 00000",
+    label: "EK - The Pro Editor",
+    number: import.meta.env.VITE_QUERY_PHONE_2 || "+91 00000 00000",
+  },
+  {
+    label: "Madhumita",
+    number: import.meta.env.VITE_QUERY_PHONE_3 || "+91 00000 00000",
   },
 ];
 
