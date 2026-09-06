@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Paperclip, Link2, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Paperclip, Link2, AlertCircle, Loader2, Send, X } from "lucide-react";
 import ChipSelect from "./ChipSelect";
+import FormField from "./form/FormField";
+import ApplicationSuccess from "./form/ApplicationSuccess";
 import { DEPARTMENTS, SOFTWARE_OPTIONS, EQUIPMENT_OPTIONS } from "../data/options";
 import { submitApplication } from "../lib/submitApplication";
 
@@ -18,26 +20,6 @@ const initialState = {
   equipment: [],
 };
 
-function Field({ index, label, children, hint }) {
-  return (
-    <div className="border-t border-charcoal-700 py-6 first:border-t-0 first:pt-0">
-      <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
-        <div className="sm:w-56 shrink-0">
-          <span className="font-display text-signal-400 text-sm mr-2 align-top">
-            {String(index).padStart(2, "0")}
-          </span>
-          <span className="text-bone-100 font-medium">{label}</span>
-          {hint && <p className="mt-1 text-xs text-bone-500 sm:pr-4">{hint}</p>}
-        </div>
-        <div className="flex-1">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-const inputClasses =
-  "w-full rounded-sm border border-charcoal-700 bg-charcoal-900/60 px-3.5 py-2.5 text-sm text-bone-100 placeholder:text-bone-500 outline-none focus:border-signal-400 transition-colors";
-
 export default function ApplicationForm() {
   const [form, setForm] = useState(initialState);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
@@ -53,9 +35,9 @@ export default function ApplicationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.department || !form.email || !form.registerNumber || !form.mobile || !form.reason) {
+    if (!form.name.trim() || !form.department || !form.mobile.trim()) {
       setStatus("error");
-      setErrorMsg("Fill in every required field before submitting.");
+      setErrorMsg("Please fill in your Full Name, Department, and Mobile Number before submitting.");
       return;
     }
     setStatus("loading");
@@ -63,61 +45,65 @@ export default function ApplicationForm() {
     try {
       await submitApplication(form);
       setStatus("success");
-      setForm(initialState);
     } catch (err) {
       setStatus("error");
-      setErrorMsg(err.message || "Something went wrong. Try again.");
+      setErrorMsg(err.message || "Something went wrong. Please try again.");
     }
   };
 
+  const handleRedirectHome = useCallback(() => {
+    setForm(initialState);
+    setStatus("idle");
+    const topEl = document.getElementById("top");
+    if (topEl) {
+      topEl.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
   if (status === "success") {
-    return (
-      <section id="apply" className="mx-auto max-w-3xl px-5 sm:px-8 py-24 text-center">
-        <CheckCircle2 className="mx-auto mb-4 text-signal-400" size={40} />
-        <h2 className="font-display text-3xl text-bone-100">Application received</h2>
-        <p className="mt-3 text-bone-300">
-          Thanks for your interest in joining Team Resolution. Our Team will reach out to you soon.
-        </p>
-        <button
-          onClick={() => setStatus("idle")}
-          className="mt-8 text-sm text-signal-400 hover:underline underline-offset-4"
-        >
-          Submit another application
-        </button>
-      </section>
-    );
+    return <ApplicationSuccess onRedirectHome={handleRedirectHome} />;
   }
 
   return (
-    <section id="apply" className="relative mx-auto max-w-3xl px-5 sm:px-8 py-20 sm:py-28">
+    <section className="relative mx-auto max-w-4xl px-4 sm:px-8 py-12 sm:py-20">
+      {/* Glow highlight behind form */}
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] max-w-[550px] h-[550px] ambient-glow-1 blur-3xl opacity-30" />
+
       <motion.div
         initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-sm text-signal-400 mb-2">Apply now</p>
-        <h2 className="font-display text-4xl sm:text-5xl text-bone-100">Application form</h2>
-        <p className="mt-4 text-bone-300 max-w-lg">
-          We’re looking for creative people who think differently, bring fresh ideas, and can turn those ideas into something real. Just be yourself and show us what you can do.
-
+        <div className="inline-flex items-center gap-2 rounded-full border border-signal-400/30 bg-signal-400/10 px-3.5 py-1 text-xs font-semibold text-signal-400 mb-3">
+          RECRUITMENT 2026
+        </div>
+        <h2 className="font-display text-4xl sm:text-5xl text-bone-100 tracking-tight">
+          Application Form
+        </h2>
+        <p className="mt-4 text-bone-300 text-base leading-relaxed max-w-lg">
+          We’re looking for creative minds who think differently, bring fresh ideas, and can turn vision into reality. Fill in your details below.
         </p>
       </motion.div>
 
-      <form onSubmit={handleSubmit} className="mt-12 rounded-sm border border-charcoal-700 bg-charcoal-800/40 p-5 sm:p-8">
-        <Field index={1} label="Name">
+      <form
+        onSubmit={handleSubmit}
+        className="relative mt-8 rounded-2xl glass-card p-6 sm:p-10 shadow-2xl border border-bone-100/10"
+      >
+        <FormField index={1} label="Full Name" required>
           <input
-            className={inputClasses}
+            className="form-input"
             value={form.name}
             onChange={(e) => update("name", e.target.value)}
-            placeholder="Your full name"
+            placeholder="e.g. James Bond"
             required
           />
-        </Field>
+        </FormField>
 
-        <Field index={2} label="Department">
+        <FormField index={2} label="Department" required>
           <select
-            className={inputClasses}
+            className="form-input cursor-pointer"
             value={form.department}
             onChange={(e) => update("department", e.target.value)}
             required
@@ -126,103 +112,145 @@ export default function ApplicationForm() {
               Select your department
             </option>
             {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>
+              <option key={d} value={d} className="bg-charcoal-900 text-bone-100">
                 {d}
               </option>
             ))}
           </select>
-        </Field>
+        </FormField>
 
-        <Field index={3} label="Email (College Mail Id if given)">
+        <FormField index={3} label="Email Address" hint="College Mail ID preferred">
           <input
-            className={inputClasses}
+            type="email"
+            className="form-input"
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
-            placeholder="Your college mail id"
-            required
+            placeholder="yourname@citchennai.net"
           />
-        </Field>
+        </FormField>
 
-        <Field index={4} label="Register number">
+        <FormField index={4} label="Register Number">
           <input
-            className={inputClasses}
+            className="form-input"
             value={form.registerNumber}
             onChange={(e) => update("registerNumber", e.target.value)}
-            placeholder="Your register / roll number"
-            required
+            placeholder="e.g. 210101001"
           />
-        </Field>
+        </FormField>
 
-        <Field index={5} label="Mobile number">
+        <FormField index={5} label="Mobile Number" required>
           <input
             type="tel"
-            className={inputClasses}
+            className="form-input"
             value={form.mobile}
             onChange={(e) => update("mobile", e.target.value)}
             placeholder="10-digit mobile number"
             required
           />
-        </Field>
+        </FormField>
 
-        <Field index={6} label="Why join Team Resolution?" hint="A few honest lines is enough.">
+        <FormField index={6} label="Why join Team Resolution?" hint="A few honest lines on what draws you to the crew.">
           <textarea
-            className={`${inputClasses} min-h-28 resize-y`}
+            className="form-input min-h-32 resize-y"
             value={form.reason}
             onChange={(e) => update("reason", e.target.value)}
-            placeholder="What draws you to the crew, and what do you want to work on?"
-            required
+            placeholder="Tell us what drives your passion and what skills you want to build or share..."
           />
-        </Field>
+        </FormField>
 
-        <Field
+        <FormField
           index={7}
-          label="Upload your work (Max 100MB)"
-          hint="Link to Drive / YouTube / Behance / Instagram — either works."
+          label="Showcase Your Work"
+          hint="Attach a file (Max 100MB) or paste a link to Drive / YouTube / Behance."
         >
           <div className="space-y-3">
-            <label className="flex items-center gap-2.5 rounded-sm border border-dashed border-charcoal-700 px-3.5 py-3 text-sm text-bone-300 cursor-pointer hover:border-signal-400 transition-colors">
-              <Paperclip size={16} className="text-bone-500 shrink-0" />
-              <span className="truncate">{form.file ? form.file.name : "Attach a file (optional)"}</span>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => update("file", e.target.files?.[0] ?? null)}
-              />
-            </label>
+            {/* File Upload Box */}
             <div className="relative">
-              <Link2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-bone-500" />
+              <label className="flex items-center justify-between rounded-lg border border-dashed border-charcoal-700 bg-charcoal-900/40 px-4 py-3 text-sm text-bone-300 cursor-pointer hover:border-signal-400/60 hover:bg-charcoal-800/50 transition-all duration-200">
+                <div className="flex items-center gap-3 truncate pr-2">
+                  <Paperclip size={18} className="text-signal-400 shrink-0" />
+                  <span className="truncate">
+                    {form.file ? (
+                      <span className="text-signal-400 font-medium">{form.file.name}</span>
+                    ) : (
+                      "Attach file (image, video, PDF)"
+                    )}
+                  </span>
+                </div>
+                {form.file ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      update("file", null);
+                    }}
+                    className="p-1 rounded-md bg-charcoal-800 hover:bg-red-500/20 hover:text-red-400 text-bone-400 transition-colors shrink-0"
+                    title="Remove file"
+                  >
+                    <X size={14} />
+                  </button>
+                ) : (
+                  <span className="text-xs font-semibold text-signal-400 bg-signal-400/10 px-2.5 py-1 rounded-md shrink-0 border border-signal-400/20">
+                    Browse
+                  </span>
+                )}
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => update("file", e.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+
+            {/* Portfolio Link Input with Guaranteed Icon Margin */}
+            <div className="relative flex items-center">
+              <Link2
+                size={18}
+                className={`absolute left-3.5 pointer-events-none transition-colors ${form.workLink ? "text-signal-400" : "text-bone-500"
+                  }`}
+              />
               <input
-                className={`${inputClasses} pl-10`}
+                className="form-input form-input-has-icon"
                 value={form.workLink}
                 onChange={(e) => update("workLink", e.target.value)}
-                placeholder="https://... (optional)"
+                placeholder="https://drive.google.com/... or portfolio link (optional)"
               />
             </div>
           </div>
-        </Field>
+        </FormField>
 
-        <Field index={8} label="Softwares you know" hint="Select all that apply.">
+        <FormField index={8} label="Softwares You Know" hint="Select all tools you have experience with.">
           <ChipSelect options={SOFTWARE_OPTIONS} selected={form.software} onToggle={toggleIn("software")} />
-        </Field>
+        </FormField>
 
-        <Field index={9} label="What equipment do you have?" hint="Select all that apply.">
+        <FormField index={9} label="Equipment You Own" hint="Select any gear you bring to the team.">
           <ChipSelect options={EQUIPMENT_OPTIONS} selected={form.equipment} onToggle={toggleIn("equipment")} />
-        </Field>
+        </FormField>
 
         {status === "error" && (
-          <div className="mt-6 flex items-start gap-2 rounded-sm border border-red-500/30 bg-red-500/10 px-3.5 py-3 text-sm text-red-300">
-            <AlertCircle size={16} className="mt-0.5 shrink-0" />
-            {errorMsg}
+          <div className="mt-6 flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300 shadow-sm">
+            <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-400" />
+            <span>{errorMsg}</span>
           </div>
         )}
 
         <button
           type="submit"
           disabled={status === "loading"}
-          className="mt-8 inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-signal-400 px-6 py-3 text-sm font-semibold text-charcoal-950 hover:bg-signal-500 transition-colors disabled:opacity-60"
+          className="btn-primary mt-8 w-full sm:w-auto"
         >
-          {status === "loading" && <Loader2 size={16} className="animate-spin" />}
-          {status === "loading" ? "Submitting…" : "Submit application"}
+          {status === "loading" ? (
+            <>
+              <Loader2 size={18} className="animate-spin text-charcoal-950" />
+              <span>Submitting Application…</span>
+            </>
+          ) : (
+            <>
+              <span>Submit Application</span>
+              <Send size={16} className="group-hover:translate-x-0.5 transition-transform" />
+            </>
+          )}
         </button>
       </form>
     </section>

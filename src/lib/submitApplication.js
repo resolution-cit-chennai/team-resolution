@@ -57,20 +57,41 @@ export async function submitApplication(formState) {
       body: JSON.stringify(payload),
     });
 
+    const statusCode = response.status;
+
     if (!response.ok) {
-      throw new Error("The server didn't accept the application. Try again in a moment.");
+      const error = new Error(
+        `The server didn't accept the application (Status: ${statusCode} ${response.statusText}). Try again in a moment.`
+      );
+      error.status = statusCode;
+      error.statusCode = statusCode;
+      throw error;
     }
 
     const result = await response.json().catch(() => ({ ok: true }));
     if (result && result.ok === false) {
-      throw new Error(result.error || "Something went wrong while saving your application.");
+      const error = new Error(
+        result.error ||
+          `Something went wrong while saving your application (Status: ${result.statusCode || statusCode}).`
+      );
+      error.status = result.statusCode || statusCode;
+      error.statusCode = result.statusCode || statusCode;
+      throw error;
     }
-    return result;
+
+    return {
+      ...result,
+      status: statusCode,
+      statusCode: result.statusCode || statusCode,
+    };
   } catch (err) {
     if (err instanceof TypeError && err.message === "Failed to fetch") {
-      throw new Error(
-        "Failed to connect to Google Sheets. Make sure your Google Apps Script Web App is deployed with 'Who has access' set to 'Anyone'."
+      const fetchErr = new Error(
+        "Failed to connect to Google Sheets (Status: 0 / Network Error). Make sure your Google Apps Script Web App is deployed with 'Who has access' set to 'Anyone'."
       );
+      fetchErr.status = 0;
+      fetchErr.statusCode = 0;
+      throw fetchErr;
     }
     throw err;
   }
