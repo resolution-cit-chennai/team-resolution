@@ -140,6 +140,10 @@
   color: var(--color-bone-500);
 }
 
+.form-input-has-icon {
+  padding-left: 2.75rem !important;
+}
+
 .form-input:focus {
   border-color: var(--color-signal-400);
   box-shadow: 0 0 0 2px rgba(255, 207, 37, 0.2);

@@ -1,54 +1,39 @@
-import { useState, useEffect } from "react";
+import LazySection from "./components/LazySection";
 import Nav from "./components/Nav";
+import Hero from "./components/Hero";
 import Footer from "./components/Footer";
-import HomePage from "./pages/HomePage";
-import ApplyPage from "./pages/ApplyPage";
+import SectionLoader from "./components/SectionLoader";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    return window.location.hash === "#/apply" ? "apply" : "home";
-  });
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === "#/apply") {
-        setCurrentPage("apply");
-      } else {
-        setCurrentPage("home");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  const navigateToHome = () => {
-    window.location.hash = "#/";
-    setCurrentPage("home");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const navigateToApply = () => {
-    window.location.hash = "#/apply";
-    setCurrentPage("apply");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <div className="min-h-screen bg-charcoal-900 overflow-x-hidden flex flex-col">
       <div className="noise-layer" />
-      <Nav
-        currentPage={currentPage}
-        onNavigateHome={navigateToHome}
-        onNavigateApply={navigateToApply}
-      />
+
+      {/* Sticky Header Navigation */}
+      <Nav />
+
       <main className="flex-1">
-        {currentPage === "apply" ? (
-          <ApplyPage onNavigateHome={navigateToHome} />
-        ) : (
-          <HomePage onNavigateApply={navigateToApply} />
-        )}
+        {/* 1. Landing Hero Section (Above the fold - loaded immediately) */}
+        <Hero />
+
+        {/* 2. Showcase Section (Lazy-loaded ONLY on scroll into view) */}
+        <LazySection
+          id="showcase"
+          importFunc={() => import("./components/Showcase")}
+          fallback={<SectionLoader label="Loading showcase..." />}
+          rootMargin="250px 0px"
+        />
+
+        {/* 3. Application Form Section (Lazy-loaded ONLY on scroll into view) */}
+        <LazySection
+          id="apply"
+          importFunc={() => import("./components/ApplicationForm")}
+          fallback={<SectionLoader label="Loading application form..." />}
+          rootMargin="250px 0px"
+        />
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );

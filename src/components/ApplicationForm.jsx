@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Paperclip, Link2, AlertCircle, Loader2, Send } from "lucide-react";
+import { Paperclip, Link2, AlertCircle, Loader2, Send, X } from "lucide-react";
 import ChipSelect from "./ChipSelect";
 import FormField from "./form/FormField";
 import ApplicationSuccess from "./form/ApplicationSuccess";
@@ -20,7 +20,7 @@ const initialState = {
   equipment: [],
 };
 
-export default function ApplicationForm({ onNavigateHome }) {
+export default function ApplicationForm() {
   const [form, setForm] = useState(initialState);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
@@ -35,9 +35,9 @@ export default function ApplicationForm({ onNavigateHome }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.department || !form.email || !form.registerNumber || !form.mobile || !form.reason) {
+    if (!form.name.trim() || !form.department || !form.mobile.trim()) {
       setStatus("error");
-      setErrorMsg("Please fill in every required field before submitting.");
+      setErrorMsg("Please fill in your Full Name, Department, and Mobile Number before submitting.");
       return;
     }
     setStatus("loading");
@@ -51,22 +51,23 @@ export default function ApplicationForm({ onNavigateHome }) {
     }
   };
 
-  const handleRedirectHome = () => {
+  const handleRedirectHome = useCallback(() => {
     setForm(initialState);
     setStatus("idle");
-    if (onNavigateHome) {
-      onNavigateHome();
+    const topEl = document.getElementById("top");
+    if (topEl) {
+      topEl.scrollIntoView({ behavior: "smooth" });
     } else {
-      window.location.hash = "#/";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, []);
 
   if (status === "success") {
     return <ApplicationSuccess onRedirectHome={handleRedirectHome} />;
   }
 
   return (
-    <section id="apply" className="relative mx-auto max-w-4xl px-4 sm:px-8 py-12 sm:py-20">
+    <section className="relative mx-auto max-w-4xl px-4 sm:px-8 py-12 sm:py-20">
       {/* Glow highlight behind form */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] max-w-[550px] h-[550px] ambient-glow-1 blur-3xl opacity-30" />
 
@@ -90,17 +91,17 @@ export default function ApplicationForm({ onNavigateHome }) {
         onSubmit={handleSubmit}
         className="relative mt-8 rounded-2xl glass-card p-6 sm:p-10 shadow-2xl border border-bone-100/10"
       >
-        <FormField index={1} label="Full Name">
+        <FormField index={1} label="Full Name" required>
           <input
             className="form-input"
             value={form.name}
             onChange={(e) => update("name", e.target.value)}
-            placeholder="e.g. Shreeram"
+            placeholder="e.g. James Bond"
             required
           />
         </FormField>
 
-        <FormField index={2} label="Department">
+        <FormField index={2} label="Department" required>
           <select
             className="form-input cursor-pointer"
             value={form.department}
@@ -125,7 +126,6 @@ export default function ApplicationForm({ onNavigateHome }) {
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
             placeholder="yourname@citchennai.net"
-            required
           />
         </FormField>
 
@@ -135,11 +135,10 @@ export default function ApplicationForm({ onNavigateHome }) {
             value={form.registerNumber}
             onChange={(e) => update("registerNumber", e.target.value)}
             placeholder="e.g. 210101001"
-            required
           />
         </FormField>
 
-        <FormField index={5} label="Mobile Number">
+        <FormField index={5} label="Mobile Number" required>
           <input
             type="tel"
             className="form-input"
@@ -156,7 +155,6 @@ export default function ApplicationForm({ onNavigateHome }) {
             value={form.reason}
             onChange={(e) => update("reason", e.target.value)}
             placeholder="Tell us what drives your passion and what skills you want to build or share..."
-            required
           />
         </FormField>
 
@@ -166,24 +164,54 @@ export default function ApplicationForm({ onNavigateHome }) {
           hint="Attach a file (Max 100MB) or paste a link to Drive / YouTube / Behance."
         >
           <div className="space-y-3">
-            <label className="flex items-center justify-between rounded-lg border border-dashed border-charcoal-700 bg-charcoal-900/40 px-4 py-3.5 text-sm text-bone-300 cursor-pointer hover:border-signal-400/60 hover:bg-charcoal-800/50 transition-all duration-200">
-              <div className="flex items-center gap-3 truncate">
-                <Paperclip size={18} className="text-signal-400 shrink-0" />
-                <span className="truncate">{form.file ? form.file.name : "Attach file (image, video, PDF)"}</span>
-              </div>
-              <span className="text-xs font-semibold text-signal-400 bg-signal-400/10 px-2.5 py-1 rounded-md shrink-0">
-                Browse
-              </span>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => update("file", e.target.files?.[0] ?? null)}
-              />
-            </label>
+            {/* File Upload Box */}
             <div className="relative">
-              <Link2 size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-bone-500" />
+              <label className="flex items-center justify-between rounded-lg border border-dashed border-charcoal-700 bg-charcoal-900/40 px-4 py-3 text-sm text-bone-300 cursor-pointer hover:border-signal-400/60 hover:bg-charcoal-800/50 transition-all duration-200">
+                <div className="flex items-center gap-3 truncate pr-2">
+                  <Paperclip size={18} className="text-signal-400 shrink-0" />
+                  <span className="truncate">
+                    {form.file ? (
+                      <span className="text-signal-400 font-medium">{form.file.name}</span>
+                    ) : (
+                      "Attach file (image, video, PDF)"
+                    )}
+                  </span>
+                </div>
+                {form.file ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      update("file", null);
+                    }}
+                    className="p-1 rounded-md bg-charcoal-800 hover:bg-red-500/20 hover:text-red-400 text-bone-400 transition-colors shrink-0"
+                    title="Remove file"
+                  >
+                    <X size={14} />
+                  </button>
+                ) : (
+                  <span className="text-xs font-semibold text-signal-400 bg-signal-400/10 px-2.5 py-1 rounded-md shrink-0 border border-signal-400/20">
+                    Browse
+                  </span>
+                )}
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => update("file", e.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+
+            {/* Portfolio Link Input with Guaranteed Icon Margin */}
+            <div className="relative flex items-center">
+              <Link2
+                size={18}
+                className={`absolute left-3.5 pointer-events-none transition-colors ${form.workLink ? "text-signal-400" : "text-bone-500"
+                  }`}
+              />
               <input
-                className="form-input pl-11"
+                className="form-input form-input-has-icon"
                 value={form.workLink}
                 onChange={(e) => update("workLink", e.target.value)}
                 placeholder="https://drive.google.com/... or portfolio link (optional)"

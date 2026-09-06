@@ -13,15 +13,11 @@ const lineVariants = {
   }),
 };
 
-export default function Hero({ onNavigateApply }) {
+export default function Hero() {
   const ticker = [...SOFTWARE_OPTIONS, ...SOFTWARE_OPTIONS, ...SOFTWARE_OPTIONS];
 
   return (
     <section id="top" className="relative pt-32 pb-16 sm:pt-44 sm:pb-24 overflow-hidden">
-      {/* Background ambient lighting - optimized for mobile & desktop */}
-      <div className="pointer-events-none absolute -top-8 sm:top-10 left-1/2 -translate-x-1/2 w-[110vw] sm:w-[150vw] max-w-[700px] h-[320px] sm:h-[400px] ambient-glow-1 blur-2xl sm:blur-3xl opacity-70 sm:opacity-60" />
-      <div className="pointer-events-none absolute top-1/4 -right-16 sm:-top-40 sm:right-[-10%] w-[90vw] sm:w-[120vw] max-w-[500px] h-[320px] sm:h-[500px] ambient-glow-2 blur-2xl sm:blur-3xl opacity-45 sm:opacity-40" />
-
       {/* Grid Pattern Background - responsive size & edge-to-edge mobile mask */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.09] sm:opacity-[0.07]"
@@ -56,7 +52,7 @@ export default function Hero({ onNavigateApply }) {
         </motion.div>
 
         {/* Main Hero Display Title */}
-        <h1 className="font-display text-[12vw] leading-[0.88] sm:text-[9.5vw] lg:text-[6.8rem] xl:text-[8rem] text-bone-100 tracking-tight">
+        <h1 className="font-display text-[12vw] leading-[0.98] sm:text-[9.5vw] lg:text-[6.8rem] xl:text-[8rem] text-bone-100 tracking-tight">
           {lines.map((line, i) => (
             <span key={line} className="block overflow-hidden">
               <motion.span
@@ -67,7 +63,7 @@ export default function Hero({ onNavigateApply }) {
                 variants={lineVariants}
               >
                 {i === 1 ? (
-                  <span className="relative inline-block text-signal-400 drop-shadow-[0_0_35px_rgba(255,207,37,0.3)]">
+                  <span className="relative inline-block text-signal-400">
                     {line}
                   </span>
                 ) : (
@@ -96,11 +92,11 @@ export default function Hero({ onNavigateApply }) {
           className="mt-10 flex flex-wrap items-center gap-4 sm:gap-6"
         >
           <a
-            href="#/apply"
+            href="#apply"
             onClick={(e) => {
               e.preventDefault();
-              if (onNavigateApply) onNavigateApply();
-              else window.location.hash = "#/apply";
+              const el = document.getElementById("apply");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
             }}
             className="group relative inline-flex items-center gap-2.5 rounded-full bg-signal-400 px-7 py-3.5 text-sm font-semibold text-charcoal-950 glow-accent glow-accent-hover hover:bg-signal-500 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
           >

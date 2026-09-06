@@ -1,25 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Home, RotateCcw } from "lucide-react";
 
 export default function ApplicationSuccess({ onRedirectHome }) {
   const TOTAL_SECONDS = 10;
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
+  const redirectRef = useRef(onRedirectHome);
 
   useEffect(() => {
+    redirectRef.current = onRedirectHome;
+  }, [onRedirectHome]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      redirectRef.current?.();
+      return;
+    }
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onRedirectHome();
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onRedirectHome]);
+  }, [timeLeft]);
 
   const progressPercent = (timeLeft / TOTAL_SECONDS) * 100;
 
