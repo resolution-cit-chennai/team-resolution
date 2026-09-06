@@ -92,14 +92,14 @@ function doPost(e) {
       (body.equipment || []).join(", "),
     ]);
 
-    return jsonResponse_({ ok: true });
+    return jsonResponse_({ ok: true, statusCode: 200, message: "Application submitted successfully." });
   } catch (err) {
-    return jsonResponse_({ ok: false, error: err.message });
+    return jsonResponse_({ ok: false, statusCode: 400, error: err.message });
   }
 }
 
 function doGet() {
-  return jsonResponse_({ ok: true, message: "Team Resolution intake endpoint is live." });
+  return jsonResponse_({ ok: true, statusCode: 200, message: "Team Resolution intake endpoint is live." });
 }
 
 function jsonResponse_(obj) {
