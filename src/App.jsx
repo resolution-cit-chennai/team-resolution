@@ -30,6 +30,36 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  // Dynamically sync with Vercel Edge Config / Storage via /api/config
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLiveConfig = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("bypass") === "true") return;
+
+        const res = await fetch("/api/config", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Check isInMaintenance from Vercel Edge Config
+        if (typeof data.isInMaintenance === "boolean") {
+          if (isMounted) {
+            setIsMaintenance(data.isInMaintenance);
+          }
+        }
+      } catch (err) {
+        // Fallback to local config state
+      }
+    };
+
+    fetchLiveConfig();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   if (isMaintenance) {
     return <MaintenancePage />;
   }
