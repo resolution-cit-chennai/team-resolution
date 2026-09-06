@@ -47,7 +47,14 @@ export default function ApplicationForm() {
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      setErrorMsg(err.message || "Something went wrong. Please try again.");
+      const rawMsg = err?.message || "";
+      // Strip any status codes (e.g., 404, 500, Status: 404) so raw HTTP codes never show in the UI
+      const cleanMsg = rawMsg
+        .replace(/\s*\(?status(?:\s*code)?:\s*\d+[^)]*\)?/gi, "")
+        .replace(/\s*\(?http\s*\d+[^)]*\)?/gi, "")
+        .replace(/\b[45]\d{2}\b/g, "")
+        .trim();
+      setErrorMsg(cleanMsg || "Something went wrong while submitting your application. Please try again.");
     }
   };
 

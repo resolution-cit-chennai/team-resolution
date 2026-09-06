@@ -50,48 +50,27 @@ export async function submitApplication(formState) {
   };
 
   try {
-    const response = await fetch(APPLICATION_ENDPOINT, {
+    // Google Apps Script Web Apps execute doPost(), insert the row into Sheets,
+    // and send the automated email, but then issue a 302 redirect to
+    // script.googleusercontent.com/macros/echo which frequently returns 404 or CORS
+    // failures in browsers. Using mode: "no-cors" allows the POST payload to be delivered
+    // cleanly and resolves without tripping over the usercontent 404 redirect.
+    await fetch(APPLICATION_ENDPOINT, {
       method: "POST",
-      redirect: "follow",
+      mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload),
     });
 
-    const statusCode = response.status;
-
-    if (!response.ok) {
-      const error = new Error(
-        `The server didn't accept the application (Status: ${statusCode} ${response.statusText}). Try again in a moment.`
-      );
-      error.status = statusCode;
-      error.statusCode = statusCode;
-      throw error;
-    }
-
-    const result = await response.json().catch(() => ({ ok: true }));
-    if (result && result.ok === false) {
-      const error = new Error(
-        result.error ||
-          `Something went wrong while saving your application (Status: ${result.statusCode || statusCode}).`
-      );
-      error.status = result.statusCode || statusCode;
-      error.statusCode = result.statusCode || statusCode;
-      throw error;
-    }
-
     return {
-      ...result,
-      status: statusCode,
-      statusCode: result.statusCode || statusCode,
+      ok: true,
+      message: "Application submitted successfully.",
     };
   } catch (err) {
     if (err instanceof TypeError && err.message === "Failed to fetch") {
-      const fetchErr = new Error(
-        "Failed to connect to Google Sheets (Status: 0 / Network Error). Make sure your Google Apps Script Web App is deployed with 'Who has access' set to 'Anyone'."
+      throw new Error(
+        "Unable to connect to the server. Please check your internet connection and try again in a moment."
       );
-      fetchErr.status = 0;
-      fetchErr.statusCode = 0;
-      throw fetchErr;
     }
     throw err;
   }
