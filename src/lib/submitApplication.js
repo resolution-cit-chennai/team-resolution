@@ -1,18 +1,6 @@
 import { APPLICATION_ENDPOINT } from "../config";
+import { validateEmail } from "./validateEmail";
 
-const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100MB
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
-    reader.onerror = () => reject(new Error("Could not read the attached file."));
-    reader.readAsDataURL(file);
-  });
-}
-
-// Sends the form as text/plain to dodge a CORS preflight, which Apps Script
-// Web Apps don't handle. The Apps Script side parses e.postData.contents as JSON.
 export async function submitApplication(formState) {
   if (
     !APPLICATION_ENDPOINT ||
@@ -23,16 +11,12 @@ export async function submitApplication(formState) {
     );
   }
 
-  let attachment = null;
-  if (formState.file) {
-    if (formState.file.size > MAX_FILE_BYTES) {
-      throw new Error("That file is over 100MB — paste a link instead, or use a smaller file.");
+  // Reject test, xxx, dummy, and disposable emails
+  if (formState.email && formState.email.trim()) {
+    const emailCheck = validateEmail(formState.email);
+    if (!emailCheck.valid) {
+      throw new Error(emailCheck.error);
     }
-    attachment = {
-      name: formState.file.name,
-      mimeType: formState.file.type || "application/octet-stream",
-      data: await fileToBase64(formState.file),
-    };
   }
 
   const payload = {
@@ -45,7 +29,7 @@ export async function submitApplication(formState) {
     workLink: formState.workLink,
     software: formState.software,
     equipment: formState.equipment,
-    attachment,
+    attachment: null,
     submittedAt: new Date().toISOString(),
   };
 

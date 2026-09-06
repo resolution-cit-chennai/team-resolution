@@ -54,18 +54,78 @@ export default function CoverflowCarousel({ items = [] }) {
   }, [nextSlide, prevSlide]);
 
   const lastWheelTime = useRef(0);
-  const handleWheel = (e) => {
-    const now = Date.now();
-    if (now - lastWheelTime.current < 450) return;
-    if (Math.abs(e.deltaX) > 15 || Math.abs(e.deltaY) > 15) {
-      if (e.deltaX > 15 || e.deltaY > 15) {
+  const activeIndexRef = useRef(activeIndex);
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  // Non-passive wheel event listener:
+  // Locks the website scroll while navigating intermediate cards, but when scrolling
+  // past the last card (or before the first card), disables the lock and allows
+  // the page to move down/up while preserving circular carousel order.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || count === 0) return;
+
+    const handleWheel = (e) => {
+      const now = Date.now();
+      const isVertical = Math.abs(e.deltaY) >= Math.abs(e.deltaX);
+      const delta = isVertical ? e.deltaY : e.deltaX;
+
+      if (Math.abs(delta) < 10) return;
+
+      const currentNormalized = ((activeIndexRef.current % count) + count) % count;
+      const isAtEnd = currentNormalized === count - 1;
+      const isAtStart = currentNormalized === 0;
+
+      // 1. Scrolling DOWN after the last card:
+      // Advances circularly and smoothly moves the webpage down to the application section
+      if (isVertical && delta > 0 && isAtEnd) {
+        if (now - lastWheelTime.current >= 380) {
+          nextSlide();
+          lastWheelTime.current = now;
+          const nextSection = document.getElementById("apply");
+          if (nextSection) {
+            nextSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+        return;
+      }
+
+      // 2. Scrolling UP before the first card:
+      // Retreats circularly and smoothly moves the webpage up to the hero section
+      if (isVertical && delta < 0 && isAtStart) {
+        if (now - lastWheelTime.current >= 380) {
+          prevSlide();
+          lastWheelTime.current = now;
+          const prevSection = document.getElementById("top");
+          if (prevSection) {
+            prevSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+        return;
+      }
+
+      // 3. Otherwise: Scrolling between cards is locked to the carousel
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (now - lastWheelTime.current < 260) return;
+
+      if (delta > 0) {
         nextSlide();
       } else {
         prevSlide();
       }
       lastWheelTime.current = now;
-    }
-  };
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, [count, nextSlide, prevSlide]);
 
   if (!items || items.length === 0) return null;
 
@@ -87,12 +147,12 @@ export default function CoverflowCarousel({ items = [] }) {
   return (
     <div
       ref={containerRef}
-      onWheel={handleWheel}
-      className="relative w-full overflow-hidden py-10 px-2 sm:px-6 select-none"
+      style={{ overscrollBehavior: "contain" }}
+      className="relative w-full overflow-hidden py-12 px-2 sm:px-6 select-none overscroll-contain"
     >
       {/* 3D Coverflow Stage */}
       <div
-        className="relative h-[380px] xs:h-[420px] sm:h-[480px] md:h-[520px] w-full flex items-center justify-center"
+        className="relative h-[390px] xs:h-[430px] sm:h-[490px] md:h-[530px] w-full flex items-center justify-center"
         style={{ perspective: "1200px" }}
       >
         {cards.map(({ offset, virtualIndex, item }) => {
@@ -105,7 +165,7 @@ export default function CoverflowCarousel({ items = [] }) {
               className="absolute w-[240px] xs:w-[280px] sm:w-[340px] md:w-[380px] h-[340px] xs:h-[380px] sm:h-[440px] md:h-[480px] transform-gpu"
               style={{
                 willChange: "transform, opacity",
-                cursor: isCenter ? "pointer" : "pointer",
+                cursor: "pointer",
                 transformPerspective: 1200,
                 backfaceVisibility: "hidden",
               }}
@@ -139,8 +199,21 @@ export default function CoverflowCarousel({ items = [] }) {
                 if (d.x > 40) prevSlide();
               }}
             >
-              {/* Separate clipping div preserving 3D transform space */}
-              <div className="relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-charcoal-950 shadow-2xl border border-bone-100/20">
+              {/* Ground Drop Shadow beneath card (GPU-composited) */}
+              <div
+                className={`absolute -bottom-6 left-6 right-6 h-6 rounded-full pointer-events-none transition-all duration-300 ${
+                  isCenter ? "bg-black/90 opacity-90 blur-md scale-105" : "bg-black/80 opacity-60 blur-sm scale-95"
+                }`}
+              />
+
+              {/* Card Container with rich multi-layered elevation box shadow */}
+              <div
+                className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-charcoal-950 border transition-all duration-300 ${
+                  isCenter
+                    ? "border-signal-400/50 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.95),0_15px_30px_-5px_rgba(0,0,0,0.8),0_0_35px_rgba(255,207,37,0.18)]"
+                    : "border-bone-100/20 shadow-[0_25px_60px_-12px_rgba(0,0,0,0.9),0_12px_25px_-8px_rgba(0,0,0,0.75)]"
+                }`}
+              >
                 <img
                   src={item.image}
                   alt={item.title}

@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Paperclip, Link2, AlertCircle, Loader2, Send, X } from "lucide-react";
+import { Link2, AlertCircle, Loader2, Send } from "lucide-react";
 import ChipSelect from "./ChipSelect";
 import FormField from "./form/FormField";
 import ApplicationSuccess from "./form/ApplicationSuccess";
 import { DEPARTMENTS, SOFTWARE_OPTIONS, EQUIPMENT_OPTIONS } from "../data/options";
 import { submitApplication } from "../lib/submitApplication";
+import { validateEmail } from "../lib/validateEmail";
 
 const initialState = {
   name: "",
@@ -15,7 +16,6 @@ const initialState = {
   mobile: "",
   reason: "",
   workLink: "",
-  file: null,
   software: [],
   equipment: [],
 };
@@ -35,11 +35,22 @@ export default function ApplicationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.department || !form.mobile.trim()) {
+    if (!form.name.trim() || !form.department || !form.mobile.trim() || !form.workLink.trim()) {
       setStatus("error");
-      setErrorMsg("Please fill in your Full Name, Department, and Mobile Number before submitting.");
+      setErrorMsg("Please fill in your Full Name, Department, Mobile Number, and Portfolio Link before submitting.");
       return;
     }
+
+    // Validate email against test, xxx, dummy, and disposable patterns
+    if (form.email && form.email.trim()) {
+      const emailCheck = validateEmail(form.email);
+      if (!emailCheck.valid) {
+        setStatus("error");
+        setErrorMsg(emailCheck.error);
+        return;
+      }
+    }
+
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -132,7 +143,7 @@ export default function ApplicationForm() {
             className="form-input"
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
-            placeholder="yourname@citchennai.net"
+            placeholder="Enter your mail id"
           />
         </FormField>
 
@@ -168,62 +179,24 @@ export default function ApplicationForm() {
         <FormField
           index={7}
           label="Showcase Your Work"
-          hint="Attach a file (Max 100MB) or paste a link to Drive / YouTube / Behance."
+          hint="Paste a link to your Instagram, Behance, or Google Drive folder."
+          required
         >
-          <div className="space-y-3">
-            {/* File Upload Box */}
-            <div className="relative">
-              <label className="flex items-center justify-between rounded-lg border border-dashed border-charcoal-700 bg-charcoal-900/40 px-4 py-3 text-sm text-bone-300 cursor-pointer hover:border-signal-400/60 hover:bg-charcoal-800/50 transition-all duration-200">
-                <div className="flex items-center gap-3 truncate pr-2">
-                  <Paperclip size={18} className="text-signal-400 shrink-0" />
-                  <span className="truncate">
-                    {form.file ? (
-                      <span className="text-signal-400 font-medium">{form.file.name}</span>
-                    ) : (
-                      "Attach file (image, video, PDF)"
-                    )}
-                  </span>
-                </div>
-                {form.file ? (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      update("file", null);
-                    }}
-                    className="p-1 rounded-md bg-charcoal-800 hover:bg-red-500/20 hover:text-red-400 text-bone-400 transition-colors shrink-0"
-                    title="Remove file"
-                  >
-                    <X size={14} />
-                  </button>
-                ) : (
-                  <span className="text-xs font-semibold text-signal-400 bg-signal-400/10 px-2.5 py-1 rounded-md shrink-0 border border-signal-400/20">
-                    Browse
-                  </span>
-                )}
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => update("file", e.target.files?.[0] ?? null)}
-                />
-              </label>
-            </div>
-
-            {/* Portfolio Link Input with Guaranteed Icon Margin */}
-            <div className="relative flex items-center">
-              <Link2
-                size={18}
-                className={`absolute left-3.5 pointer-events-none transition-colors ${form.workLink ? "text-signal-400" : "text-bone-500"
-                  }`}
-              />
-              <input
-                className="form-input form-input-has-icon"
-                value={form.workLink}
-                onChange={(e) => update("workLink", e.target.value)}
-                placeholder="https://drive.google.com/... or portfolio link (optional)"
-              />
-            </div>
+          <div className="relative flex items-center">
+            <Link2
+              size={18}
+              className={`absolute left-3.5 pointer-events-none transition-colors ${
+                form.workLink ? "text-signal-400" : "text-bone-500"
+              }`}
+            />
+            <input
+              type="text"
+              className="form-input form-input-has-icon"
+              value={form.workLink}
+              onChange={(e) => update("workLink", e.target.value)}
+              placeholder="Instagram, Behance, or Google Drive link"
+              required
+            />
           </div>
         </FormField>
 

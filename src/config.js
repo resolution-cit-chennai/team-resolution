@@ -32,3 +32,9 @@ export const SOCIAL_LINKS = [
   },
 ];
 
+// Maintenance / Revealing Soon mode
+// Set to true by default so visitors see the "Revealing Soon" page on home.
+// Can be toggled in .env (VITE_MAINTENANCE_MODE="false" to disable) or bypassed via ?bypass=true
+export const MAINTENANCE_MODE =
+  import.meta.env.VITE_MAINTENANCE_MODE !== "false";
+

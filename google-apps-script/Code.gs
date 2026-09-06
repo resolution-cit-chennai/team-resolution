@@ -106,13 +106,25 @@ function saveAttachment_(attachment) {
  * with automatic fallback to MailApp if alias/Gmail is restricted.
  */
 function sendConfirmationEmail_(data) {
-  const recipient = (data.email || "").trim();
+  const recipient = (data.email || "").trim().toLowerCase();
   if (!recipient) {
     return { sent: false, detail: "Skipped (no email provided)" };
   }
 
   if (recipient.indexOf("@") === -1 || recipient.indexOf(".") === -1) {
     return { sent: false, detail: "Failed: Invalid email address (" + recipient + ")" };
+  }
+
+  // Reject test, xxx, dummy, and disposable emails
+  const parts = recipient.split("@");
+  const localPart = parts[0] || "";
+  const domain = parts[1] || "";
+  const blockedKeywords = /(^|[._-])(test|fake|dummy|sample|temp|spam|demo|asdf|qwerty|none|null|noemail|nomail)([._-]|[0-9]|$)/i;
+  const isRepetitive = /([a-z0-9])\1{2,}/i.test(localPart);
+  const blockedDomains = ["test.com", "example.com", "fake.com", "tempmail.com", "mailinator.com", "yopmail.com", "trashmail.com"];
+
+  if (blockedKeywords.test(localPart) || isRepetitive || blockedDomains.indexOf(domain) !== -1) {
+    return { sent: false, detail: "Skipped (test/placeholder email detected)" };
   }
 
   const applicantName = (data.name || "Applicant").trim();
