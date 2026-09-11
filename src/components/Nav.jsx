@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.svg";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function Nav() {
