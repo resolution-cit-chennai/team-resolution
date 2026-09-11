@@ -1,19 +1,44 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Home, RotateCcw } from "lucide-react";
+import { CheckCircle2, RotateCcw } from "lucide-react";
+import { SOCIAL_LINKS } from "../../config";
 
-export default function ApplicationSuccess({ onRedirectHome }) {
+const INSTAGRAM_URL =
+  SOCIAL_LINKS.find((l) => l.href?.includes("instagram"))?.href ||
+  "https://www.instagram.com/team_resolution.cit/";
+
+function InstagramIcon({ size = 18, className = "" }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export default function ApplicationSuccess() {
   const TOTAL_SECONDS = 10;
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
-  const redirectRef = useRef(onRedirectHome);
-
-  useEffect(() => {
-    redirectRef.current = onRedirectHome;
-  }, [onRedirectHome]);
+  const redirected = useRef(false);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      redirectRef.current?.();
+      if (!redirected.current) {
+        redirected.current = true;
+        window.location.href = INSTAGRAM_URL;
+      }
       return;
     }
 
@@ -45,7 +70,7 @@ export default function ApplicationSuccess({ onRedirectHome }) {
         <h2 className="font-display text-3xl sm:text-4xl text-bone-100 tracking-tight">
           Application Received!
         </h2>
-        
+
         <p className="mt-3 text-bone-300 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
           Thank you for applying to <span className="text-signal-400 font-medium">Team Resolution</span>. Our leads will review your work and contact you shortly.
         </p>
@@ -55,7 +80,7 @@ export default function ApplicationSuccess({ onRedirectHome }) {
           <div className="flex items-center justify-between text-xs sm:text-sm font-medium mb-3">
             <span className="flex items-center gap-2 text-bone-300">
               <RotateCcw size={14} className="animate-spin text-signal-400" />
-              <span>Redirecting to Home</span>
+              <span>Redirecting to Instagram</span>
             </span>
             <span className="font-mono text-signal-400 font-semibold text-sm">
               {timeLeft}s
@@ -72,19 +97,21 @@ export default function ApplicationSuccess({ onRedirectHome }) {
             />
           </div>
           <p className="mt-2.5 text-[11px] text-bone-500">
-            If you stay on this page, it will automatically return to Home in {timeLeft} seconds.
+            You'll be taken to our Instagram page in {timeLeft} seconds.
           </p>
         </div>
 
-        {/* Action Button: Redirect to Home */}
+        {/* Action Button: Go to Instagram */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            onClick={onRedirectHome}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-primary w-full sm:w-auto"
           >
-            <Home size={18} />
-            <span>Redirect to Home</span>
-          </button>
+            <InstagramIcon size={18} />
+            <span>Follow us on Instagram</span>
+          </a>
         </div>
       </motion.div>
     </div>

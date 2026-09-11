@@ -168,6 +168,8 @@ export default function CoverflowCarousel({ items = [] }) {
                 cursor: "pointer",
                 transformPerspective: 1200,
                 backfaceVisibility: "hidden",
+                transform: "translateZ(0)",
+                contain: "layout style",
               }}
               initial={false}
               animate={{
@@ -199,26 +201,21 @@ export default function CoverflowCarousel({ items = [] }) {
                 if (d.x > 40) prevSlide();
               }}
             >
-              {/* Ground Drop Shadow beneath card (GPU-composited) */}
-              <div
-                className={`absolute -bottom-6 left-6 right-6 h-6 rounded-full pointer-events-none transition-all duration-300 ${
-                  isCenter ? "bg-black/90 opacity-90 blur-md scale-105" : "bg-black/80 opacity-60 blur-sm scale-95"
-                }`}
-              />
-
-              {/* Card Container with rich multi-layered elevation box shadow */}
+              {/* Card Container — shadow via box-shadow (compositor, no repaint) */}
               <div
                 className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-charcoal-950 border transition-all duration-300 ${
                   isCenter
-                    ? "border-signal-400/50 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.95),0_15px_30px_-5px_rgba(0,0,0,0.8),0_0_35px_rgba(255,207,37,0.18)]"
-                    : "border-bone-100/20 shadow-[0_25px_60px_-12px_rgba(0,0,0,0.9),0_12px_25px_-8px_rgba(0,0,0,0.75)]"
+                    ? "border-signal-400/50 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.9),0_0_18px_rgba(255,207,37,0.15)]"
+                    : "border-bone-100/20 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.8)]"
                 }`}
               >
                 <img
                   src={item.image}
                   alt={item.title}
                   className="w-full h-full object-cover pointer-events-none select-none"
-                  loading="lazy"
+                  loading={offset === 0 ? "eager" : "lazy"}
+                  fetchPriority={offset === 0 ? "high" : "low"}
+                  decoding="async"
                   draggable={false}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/30 to-transparent pointer-events-none" />

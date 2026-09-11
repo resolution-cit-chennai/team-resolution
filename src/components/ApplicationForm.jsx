@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link2, AlertCircle, Loader2, Send } from "lucide-react";
 import ChipSelect from "./ChipSelect";
@@ -69,19 +69,8 @@ export default function ApplicationForm() {
     }
   };
 
-  const handleRedirectHome = useCallback(() => {
-    setForm(initialState);
-    setStatus("idle");
-    const topEl = document.getElementById("top");
-    if (topEl) {
-      topEl.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, []);
-
   if (status === "success") {
-    return <ApplicationSuccess onRedirectHome={handleRedirectHome} />;
+    return <ApplicationSuccess />;
   }
 
   return (
