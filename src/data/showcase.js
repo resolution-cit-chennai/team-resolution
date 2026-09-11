@@ -1,7 +1,7 @@
-import p1 from "../assets/showcase/sana 3.png";
-import p2 from "../assets/showcase/camera.jpg";
-import p3 from "../assets/showcase/edit.png";
-import p4 from "../assets/showcase/DSC01331.JPG.jpeg";
+import p1 from "../assets/showcase/sana-3.webp";
+import p2 from "../assets/showcase/camera.webp";
+import p3 from "../assets/showcase/edit.webp";
+import p4 from "../assets/showcase/DSC01331JPG.webp";
 
 // Edit, add, or remove entries here — the fan layout below adjusts
 // automatically to however many cards are in this array.
