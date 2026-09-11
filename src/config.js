@@ -32,9 +32,6 @@ export const SOCIAL_LINKS = [
   },
 ];
 
-// Maintenance / Revealing Soon mode
-// Set to true by default so visitors see the "Revealing Soon" page on home.
-// Can be toggled in .env (VITE_MAINTENANCE_MODE="false" to disable) or bypassed via ?bypass=true
-export const MAINTENANCE_MODE =
-  import.meta.env.VITE_MAINTENANCE_MODE !== "false";
-
+// Maintenance mode is now controlled via /public/site-config.json → isInMaintenance (bool).
+// The app reads it at runtime so no rebuild is needed to toggle maintenance.
+// Override in dev: ?bypass=true (skip) | ?maintenance=true or #maintenance (force on)

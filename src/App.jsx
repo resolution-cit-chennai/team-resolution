@@ -5,19 +5,9 @@ import Showcase from "./components/Showcase";
 import ApplicationForm from "./components/ApplicationForm";
 import Footer from "./components/Footer";
 import MaintenancePage from "./pages/MaintenancePage";
-import { MAINTENANCE_MODE } from "./config";
 
 export default function App() {
-  const [isMaintenance, setIsMaintenance] = useState(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("bypass") === "true") return false;
-      if (params.get("maintenance") === "true" || window.location.hash === "#maintenance") {
-        return true;
-      }
-    }
-    return MAINTENANCE_MODE;
-  });
+  const [isMaintenance, setIsMaintenance] = useState(false);
 
   // Listen for hashchange in case user navigates to #maintenance or clears it
   useEffect(() => {
@@ -30,34 +20,57 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  // Dynamically sync with Vercel Edge Config / Storage via /api/config
+  // Resolve maintenance state: /api/config (Edge Config) → /site-config.json → false
   useEffect(() => {
     let isMounted = true;
-    const fetchLiveConfig = async () => {
+    const fetchConfig = async () => {
+      const params = new URLSearchParams(window.location.search);
+
+      // ?bypass=true always skips maintenance
+      if (params.get("bypass") === "true") {
+        if (isMounted) setIsMaintenance(false);
+        return;
+      }
+
+      // ?maintenance=true or #maintenance forces it on
+      if (
+        params.get("maintenance") === "true" ||
+        window.location.hash === "#maintenance"
+      ) {
+        if (isMounted) setIsMaintenance(true);
+        return;
+      }
+
+      // 1st try: /api/config (Vercel Edge Config in production)
       try {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("bypass") === "true") return;
-
         const res = await fetch("/api/config", { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json();
-
-        // Check isInMaintenance from Vercel Edge Config
-        if (typeof data.isInMaintenance === "boolean") {
-          if (isMounted) {
-            setIsMaintenance(data.isInMaintenance);
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.isInMaintenance === "boolean") {
+            if (isMounted) setIsMaintenance(data.isInMaintenance);
+            return;
           }
         }
-      } catch (err) {
-        // Fallback to local config state
-      }
+      } catch (_) {}
+
+      // 2nd try: /site-config.json (local dev & static fallback)
+      try {
+        const res = await fetch("/site-config.json", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.isInMaintenance === "boolean") {
+            if (isMounted) setIsMaintenance(data.isInMaintenance);
+            return;
+          }
+        }
+      } catch (_) {}
+
+      // Final fallback: stay false (site is live)
+      if (isMounted) setIsMaintenance(false);
     };
 
-    fetchLiveConfig();
-
-    return () => {
-      isMounted = false;
-    };
+    fetchConfig();
+    return () => { isMounted = false; };
   }, []);
 
   if (isMaintenance) {

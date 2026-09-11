@@ -39,10 +39,25 @@ export default async function handler(request) {
     console.error('Failed to read from Edge Config:', error);
   }
 
-  // Fallback defaults if Edge Config is not yet connected
+  // Fallback: read from /site-config.json (public directory)
+  try {
+    const origin = new URL(request.url).origin;
+    const siteConfigRes = await fetch(`${origin}/site-config.json`, { cache: 'no-store' });
+    if (siteConfigRes.ok) {
+      const siteConfig = await siteConfigRes.json();
+      return new Response(JSON.stringify(siteConfig), {
+        status: 200,
+        headers,
+      });
+    }
+  } catch (err) {
+    console.error('Failed to read site-config.json:', err);
+  }
+
+  // Last-resort default
   return new Response(
     JSON.stringify({
-      isInMaintenance: true,
+      isInMaintenance: false,
     }),
     {
       status: 200,
