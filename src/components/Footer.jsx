@@ -24,51 +24,51 @@ function InstagramIcon({ size = 15, className = "" }) {
 
 export default function Footer() {
   return (
-    <footer id="footer" className="mt-12 bg-[#12110f] border-t-2 border-black">
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 py-10">
+    <footer id="footer" className="mt-12 py-8 relative">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6">
         
-        {/* Main Footer Windows Panel */}
-        <div className="os-panel-outset p-5 sm:p-8 bg-[#171614] mb-6">
+        {/* Main Footer iOS Glass Card */}
+        <div className="ios-glass-card rounded-[2.5rem] p-6 sm:p-10 mb-6 relative overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start justify-between">
             
             {/* Brand Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-2.5">
-                <img src={logo} alt="Team Resolution" className="h-8 w-8 object-contain" />
-                <span className="font-display text-lg tracking-wider text-bone-100 uppercase">
+                <img src={logo} alt="Team Resolution" className="h-9 w-9 object-contain" />
+                <span className="font-display text-xl tracking-wider text-bone-100 uppercase">
                   TEAM RESOLUTION
                 </span>
               </div>
-              <p className="text-xs font-tech text-bone-300 leading-relaxed max-w-xs">
+              <p className="text-xs sm:text-sm font-sans text-bone-300 leading-relaxed max-w-xs">
                 The official creative & technical media crew of Chennai Institute of Technology. Pre-production, production, and post-production.
               </p>
-              <div className="pt-1">
-                <span className="inline-flex items-center gap-1.5 font-tech text-[10px] text-signal-400 border border-signal-400/40 bg-[#0c0b0a] px-2 py-0.5">
-                  <Terminal size={11} />
-                  <span>RESOLUTION_OS [v2.00]</span>
+              <div className="pt-2">
+                <span className="inline-flex items-center gap-2 font-tech text-xs text-signal-400 border border-signal-400/30 bg-signal-400/10 px-3 py-1 rounded-full backdrop-blur-md">
+                  <Terminal size={13} />
+                  <span>RESOLUTION GLASS OS v2.0</span>
                 </span>
               </div>
             </div>
 
-            {/* Contact Numbers in 3D panels */}
+            {/* Contact Numbers in Glass Pills */}
             <div>
               <p className="text-xs font-tech font-bold uppercase tracking-wider text-signal-400 mb-3 flex items-center gap-1.5">
-                <Phone size={12} className="text-signal-400" />
+                <Phone size={13} className="text-signal-400" />
                 <span>DIRECT LINE / CONTACT</span>
               </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {CONTACT_NUMBERS.map((c) => (
                   <a
                     key={`${c.label}-${c.number}`}
                     href={`tel:${c.number.replace(/\s+/g, "")}`}
-                    className="os-panel-inset p-2 flex items-center gap-2.5 text-xs font-tech hover:border-signal-400 transition-colors group"
+                    className="ios-glass-pill p-3 rounded-2xl flex items-center gap-3 text-xs font-sans hover:border-signal-400/60 transition-all group active:scale-[0.98]"
                   >
-                    <div className="h-6 w-6 flex items-center justify-center bg-[#22201d] border border-charcoal-700 text-signal-400 shrink-0">
-                      <Phone size={12} />
+                    <div className="h-7 w-7 rounded-full flex items-center justify-center bg-signal-400/15 border border-signal-400/30 text-signal-400 shrink-0">
+                      <Phone size={13} />
                     </div>
                     <div>
-                      <span className="block text-[10px] text-bone-500 uppercase">{c.label}</span>
-                      <span className="font-bold text-bone-100 group-hover:text-signal-400">{c.number}</span>
+                      <span className="block text-[10px] text-bone-400 uppercase font-medium">{c.label}</span>
+                      <span className="font-bold text-bone-100 group-hover:text-signal-400 transition-colors">{c.number}</span>
                     </div>
                   </a>
                 ))}
@@ -79,20 +79,22 @@ export default function Footer() {
             {SOCIAL_LINKS.length > 0 && (
               <div>
                 <p className="text-xs font-tech font-bold uppercase tracking-wider text-signal-400 mb-3 flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-signal-400" />
-                  <span>SOCIAL CHANNELS</span>
+                  <Sparkles size={13} className="text-signal-400" />
+                  <span>CONNECT WITH US</span>
                 </p>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2.5">
                   {SOCIAL_LINKS.map((s) => (
                     <a
                       key={s.href}
                       href={s.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="os-btn !justify-start text-xs font-tech"
+                      className="ios-glass-pill py-3 px-4 rounded-2xl flex items-center gap-3 text-xs font-sans font-semibold text-bone-200 hover:text-signal-400 transition-all active:scale-[0.98]"
                     >
-                      <InstagramIcon size={14} className="text-signal-400" />
-                      <span>{s.label.toUpperCase()}</span>
+                      <div className="h-7 w-7 rounded-full flex items-center justify-center bg-white/10 text-signal-400 shrink-0">
+                        <InstagramIcon size={15} />
+                      </div>
+                      <span>{s.label}</span>
                     </a>
                   ))}
                 </div>
@@ -102,20 +104,17 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Retro OS Bottom Status Taskbar */}
-        <div className="bg-[#1a1815] border-t border-b border-black py-2 px-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-tech text-bone-500">
+        {/* Bottom iOS Glass Status Pill */}
+        <div className="ios-segmented-bar rounded-full py-3 px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-sans text-bone-400 max-w-4xl mx-auto">
           <div className="flex items-center gap-2">
-            <span className="os-badge-ready text-[9px]">● SYSTEM READY</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>© {new Date().getFullYear()} Team Resolution CIT. All rights reserved.</span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-charcoal-500 hidden md:inline">
-              [ 1024x768 OPTIMIZED ]
-            </span>
-            <p className="flex items-center gap-1 text-bone-300">
+          <div className="flex items-center gap-2">
+            <p className="flex items-center gap-1.5 text-bone-200">
               <span>Crafted with</span>
-              <Heart size={11} className="text-red-400 fill-red-400" />
+              <Heart size={12} className="text-red-400 fill-red-400" />
               <span>by Team Resolution</span>
             </p>
           </div>

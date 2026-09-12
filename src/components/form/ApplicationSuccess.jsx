@@ -54,78 +54,60 @@ export default function ApplicationSuccess() {
   return (
     <div className="mx-auto max-w-xl px-4 py-16 text-center">
       <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 15 }}
+        initial={{ scale: 0.92, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="os-window text-left"
+        className="ios-glass-card rounded-[2.5rem] p-6 sm:p-10 text-center relative overflow-hidden shadow-2xl"
       >
-        {/* Window Titlebar */}
-        <div className="os-titlebar">
-          <div className="flex items-center gap-2">
-            <Zap size={13} className="text-signal-400" />
-            <span className="font-tech font-bold text-xs">
-              TRANSMISSION_SUCCESS.EXE — Status 200 OK
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
-            <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
-            <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
-          </div>
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-signal-400/20 border border-signal-400/40 text-signal-400 mb-6 shadow-[0_0_30px_rgba(255,207,37,0.3)]">
+          <CheckCircle2 size={44} />
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 sm:p-10 bg-[#141311] text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center bg-signal-400/10 border-2 border-signal-400 text-signal-400 mb-5">
-            <CheckCircle2 size={36} />
+        <h2 className="font-display text-3xl sm:text-4xl text-bone-100 uppercase tracking-tight">
+          Application <span className="text-signal-400">Received!</span>
+        </h2>
+
+        <p className="mt-3 text-xs sm:text-sm font-sans text-bone-300 max-w-md mx-auto leading-relaxed">
+          Thank you for applying to <strong className="text-signal-400">TEAM RESOLUTION</strong>. Our leads will review your portfolio and contact you shortly.
+        </p>
+
+        {/* 10-Second Auto-Redirect Box */}
+        <div className="mt-8 bg-black/40 border border-white/10 rounded-2xl p-4 max-w-sm mx-auto text-left backdrop-blur-md">
+          <div className="flex items-center justify-between text-xs font-sans font-bold mb-2 text-bone-200">
+            <span className="flex items-center gap-1.5">
+              <RotateCcw size={14} className="animate-spin text-signal-400" />
+              <span>Redirecting to Instagram</span>
+            </span>
+            <span className="text-signal-400 font-mono font-bold text-sm">
+              {timeLeft}s
+            </span>
           </div>
 
-          <h2 className="font-display text-3xl text-bone-100 uppercase tracking-tight">
-            Application <span className="text-signal-400">Received!</span>
-          </h2>
+          {/* Segmented Progress Bar */}
+          <div className="h-2.5 w-full bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/10">
+            <motion.div
+              className="h-full bg-signal-400 rounded-full shadow-[0_0_10px_rgba(255,207,37,0.8)]"
+              initial={{ width: "100%" }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 1, ease: "linear" }}
+            />
+          </div>
 
-          <p className="mt-3 text-xs sm:text-sm font-tech text-bone-300 max-w-md mx-auto leading-relaxed">
-            Thank you for applying to <strong className="text-signal-400">TEAM RESOLUTION</strong>. Our leads will review your portfolio and contact you shortly.
+          <p className="mt-2 text-[10px] font-sans text-bone-400 text-center font-medium">
+            Redirecting automatically...
           </p>
+        </div>
 
-          {/* 10-Second Auto-Redirect Box */}
-          <div className="mt-6 os-panel-inset p-4 max-w-sm mx-auto text-left">
-            <div className="flex items-center justify-between text-xs font-tech font-bold mb-2 text-bone-300">
-              <span className="flex items-center gap-1.5">
-                <RotateCcw size={12} className="animate-spin text-signal-400" />
-                <span>Redirecting to Instagram</span>
-              </span>
-              <span className="text-signal-400 font-mono font-bold">
-                {timeLeft}s
-              </span>
-            </div>
-
-            {/* Segmented Progress Bar */}
-            <div className="h-3 w-full bg-[#050504] border border-charcoal-700 overflow-hidden p-0.5">
-              <motion.div
-                className="h-full bg-signal-400"
-                initial={{ width: "100%" }}
-                animate={{ width: `${progressPercent}%` }}
-                transition={{ duration: 1, ease: "linear" }}
-              />
-            </div>
-
-            <p className="mt-2 text-[10px] font-tech text-bone-500 text-center">
-              [ AUTO-REDIRECT IN PROGRESS ]
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <a
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary inline-flex items-center gap-2 text-xs"
-            >
-              <InstagramIcon size={15} />
-              <span>VISIT TEAM INSTAGRAM</span>
-            </a>
-          </div>
+        <div className="mt-8">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary inline-flex items-center justify-center gap-2 py-3 px-8 rounded-full text-xs font-bold active:scale-95 transition-all shadow-xl"
+          >
+            <InstagramIcon size={16} />
+            <span>VISIT TEAM INSTAGRAM</span>
+          </a>
         </div>
       </motion.div>
     </div>

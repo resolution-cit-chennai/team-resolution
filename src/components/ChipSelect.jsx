@@ -12,20 +12,20 @@ export default function ChipSelect({ options, selected, onToggle }) {
             type="button"
             aria-pressed={isActive}
             onClick={() => onToggle(opt.id)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-tech font-bold transition-all duration-100 cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-sans font-semibold transition-all duration-200 cursor-pointer active:scale-95 ${
               isActive
-                ? "bg-signal-400 text-charcoal-950 border-t border-l border-white border-b-2 border-r-2 border-yellow-700 shadow-sm translate-y-[1px]"
-                : "bg-[#22201d] text-bone-300 border-t border-l border-white/20 border-b-2 border-r-2 border-black hover:bg-[#2b2824] hover:text-bone-100"
+                ? "bg-signal-400 text-charcoal-950 shadow-[0_0_15px_rgba(255,207,37,0.4)] border border-signal-300 font-bold"
+                : "ios-glass-pill text-bone-300 hover:text-bone-100 hover:border-white/20"
             }`}
           >
             <Icon
               size={13}
               className={`shrink-0 ${
-                isActive ? "text-charcoal-950" : "text-bone-500"
+                isActive ? "text-charcoal-950" : "text-signal-400"
               }`}
             />
             <span>{opt.label}</span>
-            {isActive && <Check size={12} className="text-charcoal-950 shrink-0 stroke-[3]" />}
+            {isActive && <Check size={13} className="text-charcoal-950 shrink-0 stroke-[3]" />}
           </button>
         );
       })}

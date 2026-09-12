@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { Play } from "lucide-react";
 
 // Symmetrical 3D Coverflow alignment
 const SLOT_CONFIG = {
@@ -188,19 +188,19 @@ export default function CoverflowCarousel({ items = [] }) {
                 if (d.x > 40) prevSlide();
               }}
             >
-              {/* Card Container with Retro OS 3D Outset Frame */}
+              {/* Card Container with iOS Frosted Glass Frame */}
               <div
-                className={`relative w-full h-full overflow-hidden bg-charcoal-950 transition-all duration-300 ${
+                className={`relative w-full h-full overflow-hidden rounded-[1.75rem] transition-all duration-300 ${
                   isCenter
-                    ? "border-2 border-signal-400 shadow-[0_0_25px_rgba(255,207,37,0.3),0_12px_28px_rgba(0,0,0,0.9)]"
-                    : "border border-charcoal-700 shadow-[0_8px_20px_rgba(0,0,0,0.8)] opacity-85"
+                    ? "ios-glass-card border-2 border-signal-400/80 shadow-[0_0_30px_rgba(255,207,37,0.35),0_20px_40px_rgba(0,0,0,0.8)] scale-[1.01]"
+                    : "ios-glass-card border border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.6)] opacity-80"
                 }`}
               >
-                {/* Tag Badge */}
+                {/* iOS Glass Tag Badge */}
                 <div className="absolute top-3 left-3 z-20">
-                  <span className="inline-flex items-center gap-1 font-tech text-[10px] font-bold bg-[#0c0b0a]/90 border border-signal-400/50 text-signal-400 px-2 py-0.5">
-                    {item.video && <Play size={9} className="fill-signal-400" />}
-                    <span>[{item.tag?.toUpperCase() || "MEDIA"}]</span>
+                  <span className="inline-flex items-center gap-1 font-tech text-[9px] font-bold bg-black/60 backdrop-blur-md border border-white/20 text-signal-400 px-2 py-0.5 rounded-lg shadow-lg">
+                    {item.video && <Play size={8} className="fill-signal-400" />}
+                    <span>{item.tag?.toUpperCase() || "MEDIA"}</span>
                   </span>
                 </div>
 
@@ -213,16 +213,16 @@ export default function CoverflowCarousel({ items = [] }) {
                   decoding="async"
                   draggable={false}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0b0a] via-[#0c0b0a]/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
                 <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-10 pointer-events-none">
-                  <div className="font-tech text-[10px] text-signal-400 uppercase font-bold mb-0.5">
-                    // ENTRY_ID: {item.id}
+                  <div className="font-tech text-[10px] text-signal-400 uppercase font-bold mb-0.5 tracking-wider">
+                    // MEDIA CREW VAULT #{item.id}
                   </div>
                   <h3 className="font-display text-2xl sm:text-3xl text-bone-100 tracking-tight leading-tight uppercase">
                     {item.title}
                   </h3>
-                  <p className="mt-1.5 text-xs font-tech text-bone-300 line-clamp-2 leading-relaxed">
+                  <p className="mt-1 text-xs font-sans text-bone-300 line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
@@ -232,101 +232,72 @@ export default function CoverflowCarousel({ items = [] }) {
         })}
       </div>
 
-      {/* Retro OS Navigation Buttons + Segmented Meter */}
-      <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-2 max-w-xl mx-auto">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevSlide}
-            aria-label="Previous"
-            className="os-btn !py-1 !px-3 text-xs flex items-center gap-1"
-          >
-            <ChevronLeft size={14} />
-            <span>PREV</span>
-          </button>
-          <button
-            onClick={nextSlide}
-            aria-label="Next"
-            className="os-btn !py-1 !px-3 text-xs flex items-center gap-1"
-          >
-            <span>NEXT</span>
-            <ChevronRight size={14} />
-          </button>
-        </div>
-
-        {/* Segmented Block Counter (like the reference screenshot!) */}
-        <div className="flex items-center gap-2 font-mono text-xs text-signal-400 font-bold bg-[#0b0a09] px-3 py-1 border border-charcoal-700">
-          <span className="text-bone-500 text-[10px]">SLIDE:</span>
-          <span>[{normalizedActive + 1} / {count}]</span>
-          <span className="text-signal-400">
-            {items.map((_, i) => (i === normalizedActive ? "■" : "□")).join("")}
-          </span>
+      {/* iOS Glass Segmented Slider Indicator */}
+      <div className="mt-8 flex justify-center max-w-xl mx-auto">
+        <div className="ios-segmented-bar rounded-full flex items-center gap-3 px-5 py-2.5 font-mono text-xs text-signal-400 font-bold tracking-wider shadow-lg">
+          <span className="text-bone-400 text-[11px] tracking-widest uppercase">SLIDE:</span>
+          <span className="tracking-widest">[{normalizedActive + 1} / {count}]</span>
+          <div className="flex items-center gap-1.5 ml-2">
+            {items.map((_, i) => (
+              <span
+                key={i}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  i === normalizedActive
+                    ? "w-5 bg-signal-400 shadow-[0_0_10px_rgba(255,207,37,0.9)]"
+                    : "w-2.5 bg-white/20"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Retro OS Window Lightbox Modal */}
+      {/* iOS Glass Modal Lightbox Sheet */}
       <AnimatePresence>
         {selectedMedia && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 sm:p-6"
             onClick={() => setSelectedMedia(null)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              initial={{ scale: 0.92, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              className="relative max-w-4xl w-full os-window"
+              exit={{ scale: 0.92, opacity: 0, y: 30 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              className="relative max-w-4xl w-full ios-glass-card rounded-[2.5rem] p-6 sm:p-8 overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Window Header */}
-              <div className="os-titlebar">
-                <span className="font-tech font-bold text-xs">
-                  MEDIA_VIEWER.EXE — [{selectedMedia.title}]
-                </span>
-                <div className="flex items-center gap-1">
-                  <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
-                  <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedMedia(null)}
-                    className="os-btn-control os-btn-control-close"
-                    aria-label="Close"
-                  >
-                    ✕
-                  </button>
-                </div>
+              {/* Close Button Top Right */}
+              <button
+                type="button"
+                onClick={() => setSelectedMedia(null)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/10 border border-white/20 text-bone-200 hover:text-white flex items-center justify-center text-xs font-bold active:scale-95 transition-all z-20"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+
+              <div className="relative rounded-2xl overflow-hidden mb-6 bg-black/40 border border-white/10">
+                <img
+                  src={selectedMedia.image}
+                  alt={selectedMedia.title}
+                  className="w-full max-h-[60vh] object-contain mx-auto"
+                />
               </div>
 
-              {/* Window Body */}
-              <div className="p-4 sm:p-6 bg-[#141311]">
-                <div className="os-panel-inset p-2 mb-4">
-                  <img
-                    src={selectedMedia.image}
-                    alt={selectedMedia.title}
-                    className="w-full max-h-[60vh] object-contain mx-auto"
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <span className="os-badge-active text-[10px] mb-1 inline-block">
-                      [{selectedMedia.tag?.toUpperCase()}]
-                    </span>
-                    <h4 className="font-display text-2xl text-bone-100 uppercase">
-                      {selectedMedia.title}
-                    </h4>
-                    <p className="text-xs font-tech text-bone-300 mt-1 max-w-xl">
-                      {selectedMedia.description}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedMedia(null)}
-                    className="os-btn !py-1.5 !px-4 text-xs shrink-0"
-                  >
-                    CLOSE WINDOW
-                  </button>
-                </div>
+              <div>
+                <span className="inline-block px-2.5 py-0.5 rounded-lg bg-signal-400/15 border border-signal-400/30 text-signal-400 font-tech text-[10px] font-bold mb-2 tracking-wide">
+                  {selectedMedia.tag?.toUpperCase()}
+                </span>
+                <h4 className="font-display text-2xl sm:text-3xl text-bone-100 uppercase tracking-tight">
+                  {selectedMedia.title}
+                </h4>
+                <p className="text-xs sm:text-sm font-sans text-bone-300 mt-1.5 max-w-xl leading-relaxed">
+                  {selectedMedia.description}
+                </p>
               </div>
             </motion.div>
           </motion.div>

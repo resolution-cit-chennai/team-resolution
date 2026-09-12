@@ -75,49 +75,32 @@ export default function ApplicationForm() {
   return (
     <section className="relative mx-auto max-w-4xl px-3 sm:px-6 py-10 sm:py-16">
       
-      {/* Master Application Wizard OS Window */}
-      <div className="os-window">
-        {/* Window Titlebar */}
-        <div className="os-titlebar">
-          <div className="flex items-center gap-2">
-            <FileText size={13} className="text-signal-400" />
-            <span className="font-tech font-bold text-xs">
-              APPLICANT_REGISTRATION_WIZARD.EXE — Form v2.00
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
-            <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
-            <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
-          </div>
-        </div>
-
-        {/* Wizard Description Banner */}
-        <div className="bg-[#1b1916] p-4 border-b border-black flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* iOS Glass Application Card */}
+      <div className="ios-glass-card rounded-[2.5rem] p-5 sm:p-10 relative overflow-hidden">
+        
+        {/* Header Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 os-badge-ready text-[10px] mb-1">
-              <span>●</span>
-              <span>RECRUITMENT ACTIVE // CHENNAI INSTITUTE OF TECHNOLOGY</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-signal-400/15 border border-signal-400/30 text-signal-400 text-xs font-tech font-bold mb-2">
+              <FileText size={13} />
+              <span>RECRUITMENT ACTIVE // CIT MEDIA CREW</span>
             </div>
-            <h2 className="font-display text-2xl sm:text-3xl text-bone-100 uppercase tracking-tight">
+            <h2 className="font-display text-3xl sm:text-4xl text-bone-100 uppercase tracking-tight">
               Application Form
             </h2>
-            <p className="text-xs font-tech text-bone-300 mt-1 max-w-xl">
+            <p className="text-xs sm:text-sm font-sans text-bone-300 mt-1 max-w-xl">
               Fill in your candidate details, experience level, and showcase portfolio link.
             </p>
           </div>
-          <div className="text-right shrink-0">
-            <span className="font-mono text-xs font-bold text-signal-400 block">
-              REQUIRED: [Name, Dept, Phone, Work]
-            </span>
-            <span className="text-[10px] font-tech text-bone-500">
-              Encryption: HTTPS // Secure Form
+          <div className="sm:text-right shrink-0">
+            <span className="font-mono text-xs font-bold text-signal-400 block bg-black/40 px-3 py-1.5 rounded-xl border border-white/10">
+              * Required Fields
             </span>
           </div>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-8 bg-[#141311]">
+        <form onSubmit={handleSubmit} className="space-y-1">
           
           <FormField index={1} label="Full Name" required>
             <input
@@ -179,7 +162,7 @@ export default function ApplicationForm() {
 
           <FormField index={6} label="Why join Team Resolution?" hint="A few honest lines on what draws you to the crew.">
             <textarea
-              className="form-input min-h-28 resize-y"
+              className="form-input min-h-28 resize-y rounded-2xl"
               value={form.reason}
               onChange={(e) => update("reason", e.target.value)}
               placeholder="Tell us what drives your passion and what skills you want to build or share..."
@@ -195,7 +178,7 @@ export default function ApplicationForm() {
             <div className="relative flex items-center">
               <Link2
                 size={16}
-                className={`absolute left-3 pointer-events-none ${
+                className={`absolute left-3.5 pointer-events-none ${
                   form.workLink ? "text-signal-400" : "text-bone-500"
                 }`}
               />
@@ -219,31 +202,32 @@ export default function ApplicationForm() {
           </FormField>
 
           {status === "error" && (
-            <div className="mt-5 p-3 bg-[#2a0b0b] border border-red-500 flex items-start gap-2 text-xs font-tech text-red-200">
-              <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+            <div className="mt-5 p-4 rounded-2xl bg-red-950/40 border border-red-500/40 backdrop-blur-md flex items-start gap-2.5 text-xs font-sans text-red-200">
+              <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {/* Form Bottom Control Bar */}
-          <div className="mt-8 pt-4 border-t border-charcoal-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="font-tech text-xs text-bone-500">
-              Status: Ready to Transmit Data
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs font-sans text-bone-400 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Encryption Active // Ready to Submit</span>
             </div>
 
             <button
               type="submit"
               disabled={status === "loading"}
-              className="btn-primary w-full sm:w-auto flex items-center gap-2"
+              className="btn-primary w-full sm:w-auto py-3.5 px-8 rounded-full text-xs font-bold tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl"
             >
               {status === "loading" ? (
                 <>
-                  <Loader2 size={15} className="animate-spin text-charcoal-950" />
-                  <span>TRANSMITTING APPLICATION…</span>
+                  <Loader2 size={16} className="animate-spin text-charcoal-950" />
+                  <span>TRANSMITTING...</span>
                 </>
               ) : (
                 <>
-                  <Zap size={15} />
+                  <Zap size={16} />
                   <span>SUBMIT APPLICATION</span>
                 </>
               )}

@@ -51,7 +51,7 @@ export default function App() {
             return;
           }
         }
-      } catch (_) { }
+      } catch (_) {}
 
       // 2nd try: /site-config.json (local dev & static fallback)
       try {
@@ -63,7 +63,7 @@ export default function App() {
             return;
           }
         }
-      } catch (_) { }
+      } catch (_) {}
 
       // Final fallback: stay false (site is live)
       if (isMounted) setIsMaintenance(false);
@@ -78,12 +78,19 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen os-desktop-bg overflow-x-hidden flex flex-col font-body selection:bg-signal-400 selection:text-charcoal-950">
+    <div className="min-h-screen bg-[#080706] text-bone-100 overflow-x-hidden flex flex-col relative font-sans selection:bg-signal-400 selection:text-charcoal-950">
+      {/* Noise Texture Layer */}
+      <div className="noise-layer" />
+
+      {/* Floating Ambient Mesh Spheres */}
+      <div className="pointer-events-none fixed top-[-10vw] left-[20vw] w-[80vw] max-w-[700px] h-[700px] ios-mesh-glow-1 blur-[120px] opacity-40 z-0" />
+      <div className="pointer-events-none fixed top-[40vh] right-[-10vw] w-[70vw] max-w-[600px] h-[600px] ios-mesh-glow-2 blur-[120px] opacity-30 z-0" />
+      <div className="pointer-events-none fixed bottom-[-10vw] left-[-10vw] w-[80vw] max-w-[650px] h-[650px] ios-mesh-glow-1 blur-[140px] opacity-25 z-0" />
 
       {/* Sticky Header Navigation */}
       <Nav />
 
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         {/* 1. Landing Hero Section (Above the fold) */}
         <Hero />
 
@@ -103,4 +110,3 @@ export default function App() {
     </div>
   );
 }
-

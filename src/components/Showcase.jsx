@@ -1,51 +1,52 @@
-import { motion } from "framer-motion";
+import { Film } from "lucide-react";
 import CoverflowCarousel from "./CoverflowCarousel";
 import { SHOWCASE_ITEMS } from "../data/showcase";
-import { Film } from "lucide-react";
 
 export default function Showcase() {
   return (
     <section className="relative py-10 sm:py-16">
       <div className="relative mx-auto max-w-7xl px-3 sm:px-6">
         
-        {/* Master Media Showcase OS Window */}
-        <div className="os-window">
-          {/* Window Titlebar */}
-          <div className="os-titlebar">
-            <div className="flex items-center gap-2">
-              <Film size={13} className="text-signal-400" />
-              <span className="font-tech font-bold text-xs">
-                MEDIA_SHOWCASE_ARCHIVE.EXE [v2.00] — Official Production Vault
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
-              <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
-              <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
-            </div>
-          </div>
-
-          {/* Window Body */}
-          <div className="p-4 sm:p-8 bg-[#141311]">
-            <div className="text-center max-w-2xl mx-auto mb-6">
-              <div className="inline-flex items-center gap-1.5 os-badge-active text-[11px] mb-3">
-                <span>●</span>
-                <span>PRODUCTION SHOWCASE // CIT MEDIA CREW</span>
+        {/* iOS Glass Media Showcase Container */}
+        <div className="ios-glass-card rounded-[2rem] p-4 sm:p-8 relative overflow-hidden">
+          {/* Top Bar Header */}
+          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-signal-400/15 border border-signal-400/30 flex items-center justify-center text-signal-400">
+                <Film size={16} />
               </div>
-              <h2 className="font-display text-3xl sm:text-5xl text-bone-100 tracking-tight uppercase">
-                The Work Speaks <span className="text-signal-400">Before We Do!</span>
-              </h2>
-              <p className="mt-3 text-bone-300 text-xs sm:text-sm font-tech leading-relaxed">
-                Explore our cinematography, photography, motion design, and event coverage productions. Drag or scroll to browse.
-              </p>
+              <div>
+                <span className="font-tech text-xs font-bold text-signal-400 tracking-wider uppercase block">
+                  Production Showcase
+                </span>
+                <span className="text-[10px] text-bone-400 font-sans font-medium">
+                  Official CIT Media Crew Vault
+                </span>
+              </div>
             </div>
 
-            {/* Carousel Area */}
-            <CoverflowCarousel items={SHOWCASE_ITEMS} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/10 text-[11px] font-sans text-bone-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>HD Media Active</span>
+            </div>
           </div>
+
+          {/* Heading */}
+          <div className="text-center max-w-2xl mx-auto mb-6">
+            <h2 className="font-display text-3xl sm:text-5xl text-bone-100 tracking-tight uppercase">
+              The Work Speaks <span className="text-signal-400">Before We Do!</span>
+            </h2>
+            <p className="mt-3 text-bone-300 text-xs sm:text-sm font-sans leading-relaxed">
+              Explore our cinematography, photography, motion design, and event coverage productions. Swipe or scroll to browse.
+            </p>
+          </div>
+
+          {/* Carousel Area */}
+          <CoverflowCarousel items={SHOWCASE_ITEMS} />
         </div>
 
       </div>
     </section>
   );
 }
+
