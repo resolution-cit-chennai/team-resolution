@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, RotateCcw } from "lucide-react";
+import { CheckCircle2, RotateCcw, Zap } from "lucide-react";
 import { SOCIAL_LINKS } from "../../config";
 
 const INSTAGRAM_URL =
   SOCIAL_LINKS.find((l) => l.href?.includes("instagram"))?.href ||
   "https://www.instagram.com/team_resolution.cit/";
 
-function InstagramIcon({ size = 18, className = "" }) {
+function InstagramIcon({ size = 16, className = "" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +16,7 @@ function InstagramIcon({ size = 18, className = "" }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
@@ -52,66 +52,80 @@ export default function ApplicationSuccess() {
   const progressPercent = (timeLeft / TOTAL_SECONDS) * 100;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24 text-center">
+    <div className="mx-auto max-w-xl px-4 py-16 text-center">
       <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        initial={{ scale: 0.95, opacity: 0, y: 15 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="glass-card rounded-3xl p-8 sm:p-12 border border-signal-400/30 shadow-2xl relative overflow-hidden"
+        transition={{ duration: 0.4 }}
+        className="os-window text-left"
       >
-        {/* Glowing Background Accent */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 ambient-glow-1 blur-3xl opacity-50" />
-
-        {/* Checkmark Icon */}
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-signal-400/15 border border-signal-400/40 text-signal-400 mb-6 glow-accent">
-          <CheckCircle2 size={44} />
+        {/* Window Titlebar */}
+        <div className="os-titlebar">
+          <div className="flex items-center gap-2">
+            <Zap size={13} className="text-signal-400" />
+            <span className="font-tech font-bold text-xs">
+              TRANSMISSION_SUCCESS.EXE — Status 200 OK
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
+            <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
+            <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
+          </div>
         </div>
 
-        <h2 className="font-display text-3xl sm:text-4xl text-bone-100 tracking-tight">
-          Application Received!
-        </h2>
-
-        <p className="mt-3 text-bone-300 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
-          Thank you for applying to <span className="text-signal-400 font-medium">Team Resolution</span>. Our leads will review your work and contact you shortly.
-        </p>
-
-        {/* 10-Second Auto-Redirect Loader Box */}
-        <div className="mt-8 rounded-2xl border border-charcoal-700 bg-charcoal-900/90 p-5 max-w-md mx-auto">
-          <div className="flex items-center justify-between text-xs sm:text-sm font-medium mb-3">
-            <span className="flex items-center gap-2 text-bone-300">
-              <RotateCcw size={14} className="animate-spin text-signal-400" />
-              <span>Redirecting to Instagram</span>
-            </span>
-            <span className="font-mono text-signal-400 font-semibold text-sm">
-              {timeLeft}s
-            </span>
+        {/* Modal Body */}
+        <div className="p-6 sm:p-10 bg-[#141311] text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center bg-signal-400/10 border-2 border-signal-400 text-signal-400 mb-5">
+            <CheckCircle2 size={36} />
           </div>
 
-          {/* Smooth Progress Bar */}
-          <div className="h-2 w-full rounded-full bg-charcoal-800 overflow-hidden border border-charcoal-700">
-            <motion.div
-              className="h-full bg-signal-400 rounded-full"
-              initial={{ width: "100%" }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ duration: 1, ease: "linear" }}
-            />
-          </div>
-          <p className="mt-2.5 text-[11px] text-bone-500">
-            You'll be taken to our Instagram page in {timeLeft} seconds.
+          <h2 className="font-display text-3xl text-bone-100 uppercase tracking-tight">
+            Application <span className="text-signal-400">Received!</span>
+          </h2>
+
+          <p className="mt-3 text-xs sm:text-sm font-tech text-bone-300 max-w-md mx-auto leading-relaxed">
+            Thank you for applying to <strong className="text-signal-400">TEAM RESOLUTION</strong>. Our leads will review your portfolio and contact you shortly.
           </p>
-        </div>
 
-        {/* Action Button: Go to Instagram */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary w-full sm:w-auto"
-          >
-            <InstagramIcon size={18} />
-            <span>Follow us on Instagram</span>
-          </a>
+          {/* 10-Second Auto-Redirect Box */}
+          <div className="mt-6 os-panel-inset p-4 max-w-sm mx-auto text-left">
+            <div className="flex items-center justify-between text-xs font-tech font-bold mb-2 text-bone-300">
+              <span className="flex items-center gap-1.5">
+                <RotateCcw size={12} className="animate-spin text-signal-400" />
+                <span>Redirecting to Instagram</span>
+              </span>
+              <span className="text-signal-400 font-mono font-bold">
+                {timeLeft}s
+              </span>
+            </div>
+
+            {/* Segmented Progress Bar */}
+            <div className="h-3 w-full bg-[#050504] border border-charcoal-700 overflow-hidden p-0.5">
+              <motion.div
+                className="h-full bg-signal-400"
+                initial={{ width: "100%" }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 1, ease: "linear" }}
+              />
+            </div>
+
+            <p className="mt-2 text-[10px] font-tech text-bone-500 text-center">
+              [ AUTO-REDIRECT IN PROGRESS ]
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary inline-flex items-center gap-2 text-xs"
+            >
+              <InstagramIcon size={15} />
+              <span>VISIT TEAM INSTAGRAM</span>
+            </a>
+          </div>
         </div>
       </motion.div>
     </div>

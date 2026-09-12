@@ -1,19 +1,34 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.svg";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, Radio, FileText, Film, Phone, Sun, LayoutDashboard } from "lucide-react";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      const scrollPos = window.scrollY + 200;
+      const applyEl = document.getElementById("apply");
+      const showcaseEl = document.getElementById("showcase");
+
+      if (applyEl && scrollPos >= applyEl.offsetTop) {
+        setActiveTab("apply");
+      } else if (showcaseEl && scrollPos >= showcaseEl.offsetTop) {
+        setActiveTab("showcase");
+      } else {
+        setActiveTab("overview");
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (id) => (e) => {
+  const scrollToSection = (id, tabName) => (e) => {
     e.preventDefault();
+    setActiveTab(tabName);
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -21,52 +36,75 @@ export default function Nav() {
   };
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-charcoal-950/85 backdrop-blur-xl border-b border-bone-100/10 shadow-lg shadow-black/40 py-3"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 flex items-center justify-between">
+    <header className="fixed top-0 inset-x-0 z-50 bg-[#12110f] border-b border-black shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+      {/* 1. Master System Window Titlebar */}
+      <div className="os-titlebar border-b border-black px-2 sm:px-3 py-1.5 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0 pr-2">
+          <div className="flex items-center justify-center h-4 w-4 bg-[#ffcf25] text-[#0c0b0a] font-black text-[10px] rounded-xs shrink-0">
+            <Zap size={10} className="fill-charcoal-950 text-charcoal-950" />
+          </div>
+          <span className="font-tech font-bold text-xs text-bone-100 tracking-wide truncate">
+            <span className="sm:hidden">Team Resolution OS [v2.00]</span>
+            <span className="hidden sm:inline">Team Resolution OS [v2.00] — Creative & Technical Recruitment Portal</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="hidden md:flex items-center gap-1.5 font-tech text-[11px] text-bone-300 mr-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-400 font-bold">ONLINE</span>
+            <span className="text-charcoal-600">•</span>
+            <span>2026_CREW_ACTIVE</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
+            <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
+            <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. System Tab Strip - Touch optimized for mobile */}
+      <div className="bg-[#151412] px-2 sm:px-3 pt-1 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar border-b border-black select-none">
         <a
           href="#top"
-          onClick={scrollToSection("top")}
-          className="group flex items-center gap-3 shrink-0"
+          onClick={scrollToSection("top", "overview")}
+          className={`os-tab shrink-0 ${activeTab === "overview" ? "os-tab-active" : ""}`}
         >
-          <div className="relative flex items-center justify-center">
-            <div className="absolute -inset-1 rounded-full bg-signal-400/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <img
-              src={logo}
-              alt="Team Resolution"
-              className="relative h-9 w-9 object-contain transform group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-          <span className="font-display text-lg tracking-wider text-bone-100 leading-none pt-0.5 group-hover:text-signal-400 transition-colors hidden xs:block sm:block">
-            TEAM RESOLUTION
-          </span>
+          <LayoutDashboard size={12} className="text-signal-400 shrink-0" />
+          <span>Dashboard</span>
         </a>
 
-        <nav className="flex items-center gap-4 sm:gap-6">
-          <a
-            href="#showcase"
-            onClick={scrollToSection("showcase")}
-            className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-medium text-bone-300 hover:text-signal-400 transition-colors relative group py-1"
-          >
-            <Sparkles size={14} className="text-signal-400/70 group-hover:text-signal-400 transition-colors" />
-            <span>Why Join Us</span>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-signal-400 group-hover:w-full transition-all duration-300" />
-          </a>
+        <a
+          href="#showcase"
+          onClick={scrollToSection("showcase", "showcase")}
+          className={`os-tab shrink-0 ${activeTab === "showcase" ? "os-tab-active" : ""}`}
+        >
+          <Film size={12} className="text-signal-400 shrink-0" />
+          <span className="sm:hidden">Showcase</span>
+          <span className="hidden sm:inline">Showcase Matrix</span>
+        </a>
 
-          <a
-            href="#apply"
-            onClick={scrollToSection("apply")}
-            className="group relative inline-flex items-center gap-2 rounded-full bg-signal-400 px-5 py-2.5 text-xs sm:text-sm font-semibold text-charcoal-950 shadow-md shadow-signal-400/20 hover:bg-signal-500 hover:shadow-lg hover:shadow-signal-400/35 hover:-translate-y-0.5 transition-all duration-200"
-          >
-            <span>Apply Now</span>
-            <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform duration-200" />
-          </a>
-        </nav>
+        <a
+          href="#apply"
+          onClick={scrollToSection("apply", "apply")}
+          className={`os-tab shrink-0 ${activeTab === "apply" ? "os-tab-active" : ""}`}
+        >
+          <Zap size={12} className="text-signal-400 shrink-0" />
+          <span className="sm:hidden">Apply</span>
+          <span className="hidden sm:inline">Application Window</span>
+        </a>
+
+        <a
+          href="#footer"
+          onClick={scrollToSection("footer", "contact")}
+          className={`os-tab shrink-0 ${activeTab === "contact" ? "os-tab-active" : ""}`}
+        >
+          <Phone size={12} className="text-signal-400 shrink-0" />
+          <span className="sm:hidden">Contact</span>
+          <span className="hidden sm:inline">Contact & Help</span>
+        </a>
       </div>
     </header>
   );

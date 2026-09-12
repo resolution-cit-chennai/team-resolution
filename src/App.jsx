@@ -51,7 +51,7 @@ export default function App() {
             return;
           }
         }
-      } catch (_) {}
+      } catch (_) { }
 
       // 2nd try: /site-config.json (local dev & static fallback)
       try {
@@ -63,7 +63,7 @@ export default function App() {
             return;
           }
         }
-      } catch (_) {}
+      } catch (_) { }
 
       // Final fallback: stay false (site is live)
       if (isMounted) setIsMaintenance(false);
@@ -78,8 +78,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-charcoal-900 overflow-x-hidden flex flex-col">
-      <div className="noise-layer" />
+    <div className="min-h-screen os-desktop-bg overflow-x-hidden flex flex-col font-body selection:bg-signal-400 selection:text-charcoal-950">
 
       {/* Sticky Header Navigation */}
       <Nav />

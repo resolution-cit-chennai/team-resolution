@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
 // Symmetrical 3D Coverflow alignment
 const SLOT_CONFIG = {
@@ -13,7 +13,6 @@ const SLOT_CONFIG = {
    "3": { x: "148%",  scale: 0.56, rotateY: -36, zIndex: 0,  opacity: 0 },
 };
 
-// Ultra-smooth frictionless transition with synchronous spatial properties
 const TRANSITION = {
   duration: 0.55,
   ease: [0.16, 1, 0.3, 1],
@@ -60,10 +59,6 @@ export default function CoverflowCarousel({ items = [] }) {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
 
-  // Non-passive wheel event listener:
-  // Locks the website scroll while navigating intermediate cards, but when scrolling
-  // past the last card (or before the first card), disables the lock and allows
-  // the page to move down/up while preserving circular carousel order.
   useEffect(() => {
     const container = containerRef.current;
     if (!container || count === 0) return;
@@ -79,8 +74,6 @@ export default function CoverflowCarousel({ items = [] }) {
       const isAtEnd = currentNormalized === count - 1;
       const isAtStart = currentNormalized === 0;
 
-      // 1. Scrolling DOWN after the last card:
-      // Advances circularly and smoothly moves the webpage down to the application section
       if (isVertical && delta > 0 && isAtEnd) {
         if (now - lastWheelTime.current >= 380) {
           nextSlide();
@@ -93,8 +86,6 @@ export default function CoverflowCarousel({ items = [] }) {
         return;
       }
 
-      // 2. Scrolling UP before the first card:
-      // Retreats circularly and smoothly moves the webpage up to the hero section
       if (isVertical && delta < 0 && isAtStart) {
         if (now - lastWheelTime.current >= 380) {
           prevSlide();
@@ -107,7 +98,6 @@ export default function CoverflowCarousel({ items = [] }) {
         return;
       }
 
-      // 3. Otherwise: Scrolling between cards is locked to the carousel
       e.preventDefault();
       e.stopPropagation();
 
@@ -129,9 +119,6 @@ export default function CoverflowCarousel({ items = [] }) {
 
   if (!items || items.length === 0) return null;
 
-  // 7 slots: [-3, -2, -1, 0, 1, 2, 3]
-  // Virtual index tracks each card uniquely across the circular linked list so elements
-  // smoothly slide directly between adjacent positions with zero back-flying.
   const offsets = [-3, -2, -1, 0, 1, 2, 3];
   const cards = offsets.map((offset) => {
     const virtualIndex = activeIndex + offset;
@@ -148,7 +135,7 @@ export default function CoverflowCarousel({ items = [] }) {
     <div
       ref={containerRef}
       style={{ overscrollBehavior: "contain" }}
-      className="relative w-full overflow-hidden py-12 px-2 sm:px-6 select-none overscroll-contain"
+      className="relative w-full overflow-hidden py-6 px-2 sm:px-4 select-none overscroll-contain"
     >
       {/* 3D Coverflow Stage */}
       <div
@@ -201,14 +188,22 @@ export default function CoverflowCarousel({ items = [] }) {
                 if (d.x > 40) prevSlide();
               }}
             >
-              {/* Card Container — shadow via box-shadow (compositor, no repaint) */}
+              {/* Card Container with Retro OS 3D Outset Frame */}
               <div
-                className={`relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-charcoal-950 border transition-all duration-300 ${
+                className={`relative w-full h-full overflow-hidden bg-charcoal-950 transition-all duration-300 ${
                   isCenter
-                    ? "border-signal-400/50 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.9),0_0_18px_rgba(255,207,37,0.15)]"
-                    : "border-bone-100/20 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.8)]"
+                    ? "border-2 border-signal-400 shadow-[0_0_25px_rgba(255,207,37,0.3),0_12px_28px_rgba(0,0,0,0.9)]"
+                    : "border border-charcoal-700 shadow-[0_8px_20px_rgba(0,0,0,0.8)] opacity-85"
                 }`}
               >
+                {/* Tag Badge */}
+                <div className="absolute top-3 left-3 z-20">
+                  <span className="inline-flex items-center gap-1 font-tech text-[10px] font-bold bg-[#0c0b0a]/90 border border-signal-400/50 text-signal-400 px-2 py-0.5">
+                    {item.video && <Play size={9} className="fill-signal-400" />}
+                    <span>[{item.tag?.toUpperCase() || "MEDIA"}]</span>
+                  </span>
+                </div>
+
                 <img
                   src={item.image}
                   alt={item.title}
@@ -218,12 +213,16 @@ export default function CoverflowCarousel({ items = [] }) {
                   decoding="async"
                   draggable={false}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/30 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6 z-10 pointer-events-none">
-                  <h3 className="font-display text-2xl sm:text-3xl text-bone-100 tracking-tight leading-tight">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0b0a] via-[#0c0b0a]/40 to-transparent pointer-events-none" />
+
+                <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-10 pointer-events-none">
+                  <div className="font-tech text-[10px] text-signal-400 uppercase font-bold mb-0.5">
+                    // ENTRY_ID: {item.id}
+                  </div>
+                  <h3 className="font-display text-2xl sm:text-3xl text-bone-100 tracking-tight leading-tight uppercase">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-xs sm:text-sm text-bone-300 line-clamp-2 leading-relaxed">
+                  <p className="mt-1.5 text-xs font-tech text-bone-300 line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
@@ -233,71 +232,101 @@ export default function CoverflowCarousel({ items = [] }) {
         })}
       </div>
 
-      {/* Nav Buttons + Pagination */}
-      <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 max-w-xl mx-auto">
-        <div className="flex items-center gap-3">
+      {/* Retro OS Navigation Buttons + Segmented Meter */}
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-2 max-w-xl mx-auto">
+        <div className="flex items-center gap-2">
           <button
             onClick={prevSlide}
             aria-label="Previous"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal-700 bg-charcoal-900/80 text-bone-100 hover:border-signal-400/60 hover:text-signal-400 hover:bg-charcoal-800 transition-all duration-200 shadow-md"
+            className="os-btn !py-1 !px-3 text-xs flex items-center gap-1"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={14} />
+            <span>PREV</span>
           </button>
           <button
             onClick={nextSlide}
             aria-label="Next"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal-700 bg-charcoal-900/80 text-bone-100 hover:border-signal-400/60 hover:text-signal-400 hover:bg-charcoal-800 transition-all duration-200 shadow-md"
+            className="os-btn !py-1 !px-3 text-xs flex items-center gap-1"
           >
-            <ChevronRight size={20} />
+            <span>NEXT</span>
+            <ChevronRight size={14} />
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
-          {items.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goToSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === normalizedActive
-                  ? "w-8 bg-signal-400 shadow-sm shadow-signal-400/50"
-                  : "w-2.5 bg-charcoal-700 hover:bg-bone-500"
-              }`}
-            />
-          ))}
+        {/* Segmented Block Counter (like the reference screenshot!) */}
+        <div className="flex items-center gap-2 font-mono text-xs text-signal-400 font-bold bg-[#0b0a09] px-3 py-1 border border-charcoal-700">
+          <span className="text-bone-500 text-[10px]">SLIDE:</span>
+          <span>[{normalizedActive + 1} / {count}]</span>
+          <span className="text-signal-400">
+            {items.map((_, i) => (i === normalizedActive ? "■" : "□")).join("")}
+          </span>
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* Retro OS Window Lightbox Modal */}
       <AnimatePresence>
         {selectedMedia && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
             onClick={() => setSelectedMedia(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-4xl w-full rounded-3xl overflow-hidden border border-bone-100/20 glass-card p-4 sm:p-6"
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              className="relative max-w-4xl w-full os-window"
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={selectedMedia.image}
-                alt={selectedMedia.title}
-                className="w-full max-h-[70vh] object-contain rounded-2xl"
-              />
-              <div className="mt-4 flex items-center justify-between">
-                <div>
-                  <h4 className="font-display text-2xl text-bone-100">{selectedMedia.title}</h4>
-                  <p className="text-sm text-bone-300 mt-1">{selectedMedia.description}</p>
+              {/* Window Header */}
+              <div className="os-titlebar">
+                <span className="font-tech font-bold text-xs">
+                  MEDIA_VIEWER.EXE — [{selectedMedia.title}]
+                </span>
+                <div className="flex items-center gap-1">
+                  <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
+                  <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMedia(null)}
+                    className="os-btn-control os-btn-control-close"
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button onClick={() => setSelectedMedia(null)} className="btn-secondary text-xs py-2 px-4">
-                  Close
-                </button>
+              </div>
+
+              {/* Window Body */}
+              <div className="p-4 sm:p-6 bg-[#141311]">
+                <div className="os-panel-inset p-2 mb-4">
+                  <img
+                    src={selectedMedia.image}
+                    alt={selectedMedia.title}
+                    className="w-full max-h-[60vh] object-contain mx-auto"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <span className="os-badge-active text-[10px] mb-1 inline-block">
+                      [{selectedMedia.tag?.toUpperCase()}]
+                    </span>
+                    <h4 className="font-display text-2xl text-bone-100 uppercase">
+                      {selectedMedia.title}
+                    </h4>
+                    <p className="text-xs font-tech text-bone-300 mt-1 max-w-xl">
+                      {selectedMedia.description}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedMedia(null)}
+                    className="os-btn !py-1.5 !px-4 text-xs shrink-0"
+                  >
+                    CLOSE WINDOW
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

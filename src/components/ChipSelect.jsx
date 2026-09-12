@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 
 export default function ChipSelect({ options, selected, onToggle }) {
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="flex flex-wrap gap-2">
       {options.map((opt) => {
         const isActive = selected.includes(opt.id);
         const Icon = opt.icon;
@@ -12,20 +12,20 @@ export default function ChipSelect({ options, selected, onToggle }) {
             type="button"
             aria-pressed={isActive}
             onClick={() => onToggle(opt.id)}
-            className={`group relative inline-flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-xs sm:text-sm font-medium transition-all duration-200 ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-tech font-bold transition-all duration-100 cursor-pointer ${
               isActive
-                ? "border-signal-400 bg-signal-400/15 text-signal-400 shadow-sm shadow-signal-400/20"
-                : "border-charcoal-700/80 bg-charcoal-900/70 text-bone-300 hover:border-charcoal-600 hover:text-bone-100 hover:bg-charcoal-800/80"
+                ? "bg-signal-400 text-charcoal-950 border-t border-l border-white border-b-2 border-r-2 border-yellow-700 shadow-sm translate-y-[1px]"
+                : "bg-[#22201d] text-bone-300 border-t border-l border-white/20 border-b-2 border-r-2 border-black hover:bg-[#2b2824] hover:text-bone-100"
             }`}
           >
             <Icon
-              size={16}
-              className={`transition-colors ${
-                isActive ? "text-signal-400" : "text-bone-500 group-hover:text-bone-300"
+              size={13}
+              className={`shrink-0 ${
+                isActive ? "text-charcoal-950" : "text-bone-500"
               }`}
             />
             <span>{opt.label}</span>
-            {isActive && <Check size={14} className="text-signal-400 shrink-0 ml-0.5" />}
+            {isActive && <Check size={12} className="text-charcoal-950 shrink-0 stroke-[3]" />}
           </button>
         );
       })}

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, Terminal } from "lucide-react";
 import logo from "../assets/logo.png";
 import { SOCIAL_LINKS } from "../config";
 
-function InstagramIcon({ size = 18, className = "" }) {
+function InstagramIcon({ size = 15, className = "" }) {
   return (
     <svg
       width={size}
@@ -25,107 +25,113 @@ function InstagramIcon({ size = 18, className = "" }) {
 
 export default function MaintenancePage() {
   return (
-    <div className="relative min-h-screen bg-charcoal-950 text-bone-100 flex flex-col justify-between overflow-hidden selection:bg-signal-400 selection:text-charcoal-950">
-      {/* Noise Texture Layer */}
-      <div className="noise-layer" />
+    <div className="min-h-screen bg-[#0c0b0a] text-bone-100 flex flex-col justify-between font-body p-3 sm:p-6">
 
-      {/* Dynamic Ambient Glow Backdrops */}
-      <div className="pointer-events-none absolute top-[-15%] left-1/2 -translate-x-1/2 w-[160vw] max-w-[900px] h-[600px] ambient-glow-1 blur-3xl opacity-40" />
-      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[120vw] max-w-[650px] h-[500px] ambient-glow-2 blur-3xl opacity-30" />
+      {/* Master Maintenance OS Window */}
+      <div className="mx-auto max-w-4xl w-full os-window mt-8">
 
-      {/* Subtle Background Grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--color-bone-100) 1px, transparent 1px), linear-gradient(90deg, var(--color-bone-100) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-      />
-
-      {/* Top Brand Header */}
-      <header className="relative z-10 mx-auto max-w-7xl w-full px-5 sm:px-8 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Team Resolution" className="h-10 w-10 object-contain drop-shadow-md" />
-          <div className="flex flex-col">
-            <span className="font-display text-lg tracking-wider text-bone-100 leading-none">
-              TEAM RESOLUTION
+        {/* Window Titlebar */}
+        <div className="os-titlebar">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center h-4 w-4 bg-[#ffcf25] text-[#0c0b0a] font-black text-[10px] rounded-sm">
+              <Zap size={10} className="fill-charcoal-950 text-charcoal-950" />
+            </div>
+            <span className="font-tech font-bold text-xs text-bone-100">
+              MAINTENANCE_REBOOT.EXE [v2.00] — System Upgrade in Progress
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-bone-500 font-semibold mt-0.5">
-              Chennai Institute of Technology
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="os-badge-critical text-[10px] hidden sm:inline">
+              ● MAINTENANCE MODE
             </span>
+            <div className="flex items-center gap-1">
+              <button type="button" className="os-btn-control" aria-label="Minimize">_</button>
+              <button type="button" className="os-btn-control" aria-label="Maximize">□</button>
+              <button type="button" className="os-btn-control os-btn-control-close" aria-label="Close">✕</button>
+            </div>
           </div>
         </div>
 
-        {/* Live System Status Pulse */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-signal-400/30 bg-charcoal-900/80 px-3.5 py-1.5 text-xs font-medium text-bone-300 backdrop-blur-md shadow-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signal-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-signal-400" />
-          </span>
-          <span className="font-mono text-[11px] tracking-wide text-signal-400">MAINTENANCE MODE</span>
+        {/* Window Menu Bar */}
+        <div className="bg-[#1a1815] px-3 py-1 border-b border-black text-[11px] font-tech text-bone-300 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span>System</span>
+            <span>Diagnostics</span>
+            <span>Logs</span>
+            <span className="text-charcoal-600">|</span>
+            <span className="text-bone-500">Status: Code 503 Service Upgrade</span>
+          </div>
+          <span className="text-signal-400 font-bold">CIT CREW CORE</span>
         </div>
-      </header>
 
-      {/* Main Hero Reveal Content */}
-      <main className="relative z-10 mx-auto max-w-5xl px-4 sm:px-8 py-12 sm:py-16 text-center flex flex-col items-center justify-center flex-1">
-        {/* Animated Pill Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-signal-400/40 bg-signal-400/10 px-4 py-1.5 text-xs font-bold text-signal-400 mb-6 shadow-lg shadow-signal-400/10"
-        >
-          <Sparkles size={14} className="text-signal-400 animate-pulse" />
-          <span className="tracking-wider">SOMETHING EXTRAORDINARY IS COMING</span>
-        </motion.div>
+        {/* Window Body */}
+        <div className="p-6 sm:p-12 bg-[#141311] text-center">
 
-        {/* Big Display Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-display text-5xl sm:text-7xl lg:text-8xl text-bone-100 tracking-tight leading-[0.95] sm:leading-[0.95]"
-        >
-          REVEALING <span className="text-signal-400 underline decoration-signal-400/30 underline-offset-8">SOON</span>
-        </motion.h1>
+          {/* Brand Row */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img src={logo} alt="Team Resolution" className="h-10 w-10 object-contain" />
+            <div className="text-left">
+              <span className="font-display text-xl text-bone-100 leading-none block">
+                TEAM RESOLUTION
+              </span>
+              <span className="font-tech text-[10px] uppercase text-signal-400 font-bold tracking-wider">
+                Chennai Institute of Technology
+              </span>
+            </div>
+          </div>
 
-        {/* Narrative Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-6 text-bone-300 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-normal"
-        >
-          We’re giving the <strong className="text-bone-100 font-semibold">Team Resolution</strong> platform a major cinematic upgrade.
-        </motion.p>
+          {/* Diagnostic Inset Box */}
+          <div className="os-panel-inset p-4 max-w-lg mx-auto mb-8 text-left">
+            <div className="flex items-center justify-between text-[11px] font-tech text-bone-500 mb-2 border-b border-charcoal-800 pb-1">
+              <span className="text-signal-400 font-bold">● SYSTEM DEPLOYMENT</span>
+              <span className="os-badge-active text-[9px]">BUILDING</span>
+            </div>
+            <p className="text-xs font-tech text-bone-300 leading-relaxed">
+              We’re giving the <strong className="text-signal-400">Team Resolution</strong> platform a major cinematic upgrade. Recruitment portals and media archives will be back online shortly.
+            </p>
+            {/* Segmented Meter */}
+            <div className="mt-3 flex items-center gap-1 font-mono text-xs text-signal-400">
+              <span className="bg-signal-400 text-charcoal-950 px-1 py-0.2 font-bold">■■■■■■■■■■■■■■</span>
+              <span className="text-charcoal-600">□□□□</span>
+              <span className="text-[10px] ml-2 text-bone-500">78%</span>
+            </div>
+          </div>
 
-        {/* Direct Action Button: Instagram */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-10 sm:mt-12 flex flex-wrap items-center justify-center gap-4"
-        >
-          {SOCIAL_LINKS[0] && (
-            <a
-              href={SOCIAL_LINKS[0].href}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-primary"
-            >
-              <InstagramIcon size={18} />
-              <span>Follow Updates on Instagram</span>
-              <ArrowRight size={16} />
-            </a>
-          )}
-        </motion.div>
-      </main>
+          {/* Big Headline */}
+          <h1 className="font-display text-4xl sm:text-6xl text-bone-100 uppercase tracking-tight leading-none mb-4">
+            REVEALING <span className="text-signal-400">SOON</span>
+          </h1>
 
-      {/* Bottom Footer */}
-      <footer className="relative z-10 mx-auto max-w-7xl w-full px-5 sm:px-8 py-6 border-t border-charcoal-800 text-center text-xs text-bone-500">
-        <p>© {new Date().getFullYear()} Team Resolution • Media & Creative Arts Club • CIT Chennai. All rights reserved.</p>
+          <div className="mt-6 flex justify-center">
+            {SOCIAL_LINKS[0] && (
+              <a
+                href={SOCIAL_LINKS[0].href}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary flex items-center gap-2 text-xs font-tech"
+              >
+                <InstagramIcon size={14} />
+                <span>FOLLOW UPDATES ON INSTAGRAM</span>
+                <ArrowRight size={13} />
+              </a>
+            )}
+          </div>
+
+        </div>
+
+        {/* Window Status Footer */}
+        <div className="bg-[#1a1815] px-3 py-1.5 border-t border-black text-[10px] font-tech text-bone-500 flex items-center justify-between">
+          <span>Process: DEPLOY_MEDIA_PORTAL_2026</span>
+          <span>CIT Chennai • All Rights Reserved</span>
+        </div>
+
+      </div>
+
+      <footer className="text-center text-xs font-tech text-bone-500 mt-6 pb-2">
+        <p>© {new Date().getFullYear()} Team Resolution • Chennai Institute of Technology</p>
       </footer>
+
     </div>
   );
 }

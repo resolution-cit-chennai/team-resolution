@@ -1,8 +1,8 @@
 import logo from "../assets/logo.png";
 import { CONTACT_NUMBERS, SOCIAL_LINKS } from "../config";
-import { Phone, Heart } from "lucide-react";
+import { Phone, Heart, Terminal, Sparkles } from "lucide-react";
 
-function InstagramIcon({ size = 16, className = "" }) {
+function InstagramIcon({ size = 15, className = "" }) {
   return (
     <svg
       width={size}
@@ -24,75 +24,103 @@ function InstagramIcon({ size = 16, className = "" }) {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-charcoal-700/60 bg-charcoal-950 relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start justify-between">
-          {/* Brand Info */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <img src={logo} alt="Team Resolution" className="h-9 w-9 object-contain" />
-              <span className="font-display text-lg tracking-wider text-bone-100">TEAM RESOLUTION</span>
+    <footer id="footer" className="mt-12 bg-[#12110f] border-t-2 border-black">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 py-10">
+        
+        {/* Main Footer Windows Panel */}
+        <div className="os-panel-outset p-5 sm:p-8 bg-[#171614] mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start justify-between">
+            
+            {/* Brand Info */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <img src={logo} alt="Team Resolution" className="h-8 w-8 object-contain" />
+                <span className="font-display text-lg tracking-wider text-bone-100 uppercase">
+                  TEAM RESOLUTION
+                </span>
+              </div>
+              <p className="text-xs font-tech text-bone-300 leading-relaxed max-w-xs">
+                The official creative & technical media crew of Chennai Institute of Technology. Pre-production, production, and post-production.
+              </p>
+              <div className="pt-1">
+                <span className="inline-flex items-center gap-1.5 font-tech text-[10px] text-signal-400 border border-signal-400/40 bg-[#0c0b0a] px-2 py-0.5">
+                  <Terminal size={11} />
+                  <span>RESOLUTION_OS [v2.00]</span>
+                </span>
+              </div>
             </div>
-            <p className="text-xs sm:text-sm text-bone-500 max-w-xs leading-relaxed">
-              The official creative & technical crew of Chennai Institute of Technology. Bringing events, media, and digital experiences to life.
-            </p>
-          </div>
 
-          {/* Contact Numbers */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-signal-400 mb-4">Questions? Reach Out</p>
-            <div className="flex flex-col gap-3">
-              {CONTACT_NUMBERS.map((c) => (
-                <a
-                  key={`${c.label}-${c.number}`}
-                  href={`tel:${c.number.replace(/\s+/g, "")}`}
-                  className="group inline-flex items-center gap-2.5 text-sm text-bone-300 hover:text-signal-400 transition-colors"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-charcoal-900 border border-charcoal-700 text-signal-400 group-hover:border-signal-400/50 transition-colors">
-                    <Phone size={14} />
-                  </div>
-                  <div>
-                    <span className="block text-xs text-bone-500">{c.label}</span>
-                    <span className="font-medium text-bone-100 group-hover:text-signal-400 transition-colors">{c.number}</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Social Links */}
-          {SOCIAL_LINKS.length > 0 && (
+            {/* Contact Numbers in 3D panels */}
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-signal-400 mb-4">Connect With Us</p>
-              <div className="flex flex-col gap-2.5">
-                {SOCIAL_LINKS.map((s) => (
+              <p className="text-xs font-tech font-bold uppercase tracking-wider text-signal-400 mb-3 flex items-center gap-1.5">
+                <Phone size={12} className="text-signal-400" />
+                <span>DIRECT LINE / CONTACT</span>
+              </p>
+              <div className="flex flex-col gap-2">
+                {CONTACT_NUMBERS.map((c) => (
                   <a
-                    key={s.href}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex items-center gap-3 rounded-xl border border-charcoal-700/80 bg-charcoal-900/60 px-4 py-3 text-sm font-medium text-bone-100 hover:border-signal-400/60 hover:text-signal-400 hover:bg-charcoal-800/80 shadow-sm transition-all duration-200"
+                    key={`${c.label}-${c.number}`}
+                    href={`tel:${c.number.replace(/\s+/g, "")}`}
+                    className="os-panel-inset p-2 flex items-center gap-2.5 text-xs font-tech hover:border-signal-400 transition-colors group"
                   >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-md bg-signal-400/10 text-signal-400 group-hover:scale-110 transition-transform">
-                      <InstagramIcon size={16} />
+                    <div className="h-6 w-6 flex items-center justify-center bg-[#22201d] border border-charcoal-700 text-signal-400 shrink-0">
+                      <Phone size={12} />
                     </div>
-                    <span>{s.label}</span>
+                    <div>
+                      <span className="block text-[10px] text-bone-500 uppercase">{c.label}</span>
+                      <span className="font-bold text-bone-100 group-hover:text-signal-400">{c.number}</span>
+                    </div>
                   </a>
                 ))}
               </div>
             </div>
-          )}
+
+            {/* Social Links */}
+            {SOCIAL_LINKS.length > 0 && (
+              <div>
+                <p className="text-xs font-tech font-bold uppercase tracking-wider text-signal-400 mb-3 flex items-center gap-1.5">
+                  <Sparkles size={12} className="text-signal-400" />
+                  <span>SOCIAL CHANNELS</span>
+                </p>
+                <div className="flex flex-col gap-2">
+                  {SOCIAL_LINKS.map((s) => (
+                    <a
+                      key={s.href}
+                      href={s.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="os-btn !justify-start text-xs font-tech"
+                    >
+                      <InstagramIcon size={14} className="text-signal-400" />
+                      <span>{s.label.toUpperCase()}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-14 pt-8 border-t border-charcoal-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-bone-500">
-          <p>© {new Date().getFullYear()} Team Resolution CIT. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            <span>Crafted with</span>
-            <Heart size={13} className="text-red-500 fill-red-500/20" />
-            <span>by Team Resolution</span>
-          </p>
+        {/* Retro OS Bottom Status Taskbar */}
+        <div className="bg-[#1a1815] border-t border-b border-black py-2 px-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-tech text-bone-500">
+          <div className="flex items-center gap-2">
+            <span className="os-badge-ready text-[9px]">● SYSTEM READY</span>
+            <span>© {new Date().getFullYear()} Team Resolution CIT. All rights reserved.</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-charcoal-500 hidden md:inline">
+              [ 1024x768 OPTIMIZED ]
+            </span>
+            <p className="flex items-center gap-1 text-bone-300">
+              <span>Crafted with</span>
+              <Heart size={11} className="text-red-400 fill-red-400" />
+              <span>by Team Resolution</span>
+            </p>
+          </div>
         </div>
+
       </div>
     </footer>
   );
