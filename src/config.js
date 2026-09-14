@@ -3,11 +3,11 @@
 // Phone numbers shown in the footer "Questions?" block.
 export const CONTACT_NUMBERS = [
   {
-    label: "Dharshu - The Cam Soori",
+    label: "Dharshan",
     number: import.meta.env.VITE_QUERY_PHONE_1 || "+91 00000 00000",
   },
   {
-    label: "EK - The Pro Editor",
+    label: "Elangkaviyan",
     number: import.meta.env.VITE_QUERY_PHONE_2 || "+91 00000 00000",
   },
   {
@@ -19,8 +19,7 @@ export const CONTACT_NUMBERS = [
 // Where completed applications are sent.
 // This is read from VITE_APPLICATION_ENDPOINT in .env
 export const APPLICATION_ENDPOINT =
-  import.meta.env.VITE_APPLICATION_ENDPOINT ||
-  "https://script.google.com/macros/s/AKfycbwpsFAC3v1r8eQHDkTgere4piQWtmdP3MKWrU9h_XjnL_RaKSe2pZbJJTH-4H64GLB8eg/exec";
+  import.meta.env.VITE_APPLICATION_ENDPOINT;
 
 // Social / external links shown in the footer.
 export const SOCIAL_LINKS = [

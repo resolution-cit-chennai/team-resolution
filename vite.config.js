@@ -13,7 +13,7 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use('/api/config', (req, res) => {
           res.setHeader('Content-Type', 'application/json');
-          const configPath = path.resolve(__dirname, 'public/site-config.json');
+          const configPath = path.resolve(import.meta.dirname || '.', 'public/site-config.json');
           if (fs.existsSync(configPath)) {
             res.end(fs.readFileSync(configPath, 'utf-8'));
           } else {
