@@ -35,10 +35,32 @@ export default function ApplicationForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.department || !form.mobile.trim() || !form.workLink.trim()) {
+    if (!form.name.trim() || !form.department || !form.mobile.trim()) {
       setStatus("error");
-      setErrorMsg("Please fill in your Full Name, Department, Mobile Number, and Portfolio Link before submitting.");
+      setErrorMsg("Please fill in your Full Name, Department, and Mobile Number before submitting.");
       return;
+    }
+
+    // Validate showcase work link if provided (must start with http:// or https://)
+    const workLink = form.workLink ? form.workLink.trim() : "";
+    if (workLink) {
+      if (!/^https?:\/\//i.test(workLink)) {
+        setStatus("error");
+        setErrorMsg("Showcase link must start with http:// or https:// (e.g. https://drive.google.com/...)");
+        return;
+      }
+      try {
+        const parsedUrl = new URL(workLink);
+        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+          setStatus("error");
+          setErrorMsg("Showcase link must use http:// or https:// protocol.");
+          return;
+        }
+      } catch {
+        setStatus("error");
+        setErrorMsg("Please enter a valid URL starting with http:// or https://");
+        return;
+      }
     }
 
     // Validate email against test, xxx, dummy, and disposable patterns
@@ -168,8 +190,7 @@ export default function ApplicationForm() {
         <FormField
           index={7}
           label="Showcase Your Work"
-          hint="Paste a link to your Instagram, Behance, or Google Drive folder."
-          required
+          hint="Paste a link to your Instagram, Behance, or Google Drive folder (optional)."
         >
           <div className="relative flex items-center">
             <Link2
@@ -179,12 +200,13 @@ export default function ApplicationForm() {
               }`}
             />
             <input
-              type="text"
+              type="url"
+              pattern="https?://.*"
               className="form-input form-input-has-icon"
               value={form.workLink}
               onChange={(e) => update("workLink", e.target.value)}
-              placeholder="Instagram, Behance, or Google Drive link"
-              required
+              placeholder="https://instagram.com/... or https://drive.google.com/..."
+              title="Link must start with http:// or https://"
             />
           </div>
         </FormField>

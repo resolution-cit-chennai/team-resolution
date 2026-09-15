@@ -11,6 +11,12 @@ export async function submitApplication(formState) {
     );
   }
 
+  // Validate showcase work link if provided (must start with http:// or https://)
+  const workLink = formState.workLink ? formState.workLink.trim() : "";
+  if (workLink && !/^https?:\/\//i.test(workLink)) {
+    throw new Error("Showcase link must start with http:// or https://");
+  }
+
   // Reject test, xxx, dummy, and disposable emails
   if (formState.email && formState.email.trim()) {
     const emailCheck = validateEmail(formState.email);
