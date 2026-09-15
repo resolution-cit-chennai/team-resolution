@@ -22,9 +22,22 @@ const TRANSITION = {
 export default function CoverflowCarousel({ items = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
 
   const count = items.length;
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+        (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const nextSlide = useCallback(() => {
     setActiveIndex((prev) => prev + 1);
@@ -60,15 +73,77 @@ export default function CoverflowCarousel({ items = [] }) {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
 
-  // Non-passive wheel event listener:
-  // Locks the website scroll while navigating intermediate cards, but when scrolling
-  // past the last card (or before the first card), disables the lock and allows
-  // the page to move down/up while preserving circular carousel order.
+  // Touch handlers for mobile swipe while keeping vertical scroll 100% native and smooth
+  const touchStartRef = useRef({ x: 0, y: 0, time: 0 });
+  const isSwipingRef = useRef(false);
+  const hasMovedRef = useRef(false);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    };
+    isSwipingRef.current = true;
+    hasMovedRef.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isSwipingRef.current || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    const diffX = Math.abs(touch.clientX - touchStartRef.current.x);
+    const diffY = Math.abs(touch.clientY - touchStartRef.current.y);
+
+    if (diffX > 8 || diffY > 8) {
+      hasMovedRef.current = true;
+    }
+
+    // If vertical movement dominates, this is a page scroll gesture:
+    // Cancel swipe tracking so mobile browser scrolls the webpage smoothly without friction
+    if (diffY > diffX && diffY > 10) {
+      isSwipingRef.current = false;
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isSwipingRef.current || e.changedTouches.length !== 1) return;
+    isSwipingRef.current = false;
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    const deltaTime = Date.now() - touchStartRef.current.time;
+
+    // Trigger next / prev slide on deliberate horizontal swipe
+    if (
+      Math.abs(deltaX) > 35 &&
+      Math.abs(deltaX) > Math.abs(deltaY) * 1.3 &&
+      deltaTime < 600
+    ) {
+      if (deltaX < 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
+  // Wheel listener: Only active on desktop screens.
+  // On mobile, wheel lock is completely bypassed to prevent scroll trapping.
   useEffect(() => {
     const container = containerRef.current;
     if (!container || count === 0) return;
 
     const handleWheel = (e) => {
+      // On mobile / touch devices: never hijack or lock the scroll
+      if (
+        window.innerWidth < 768 ||
+        (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+      ) {
+        return;
+      }
+
       const now = Date.now();
       const isVertical = Math.abs(e.deltaY) >= Math.abs(e.deltaX);
       const delta = isVertical ? e.deltaY : e.deltaX;
@@ -107,7 +182,7 @@ export default function CoverflowCarousel({ items = [] }) {
         return;
       }
 
-      // 3. Otherwise: Scrolling between cards is locked to the carousel
+      // 3. Otherwise on desktop: Scrolling between cards is locked to the carousel
       e.preventDefault();
       e.stopPropagation();
 
@@ -147,13 +222,21 @@ export default function CoverflowCarousel({ items = [] }) {
   return (
     <div
       ref={containerRef}
-      style={{ overscrollBehavior: "contain" }}
-      className="relative w-full overflow-hidden py-12 px-2 sm:px-6 select-none overscroll-contain"
+      style={{
+        overscrollBehavior: isMobile ? "auto" : "contain",
+        touchAction: "pan-y",
+      }}
+      className={`relative w-full overflow-hidden py-12 px-2 sm:px-6 select-none touch-pan-y ${
+        isMobile ? "overscroll-y-auto" : "overscroll-contain"
+      }`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* 3D Coverflow Stage */}
       <div
-        className="relative h-[390px] xs:h-[430px] sm:h-[490px] md:h-[530px] w-full flex items-center justify-center"
-        style={{ perspective: "1200px" }}
+        className="relative h-[390px] xs:h-[430px] sm:h-[490px] md:h-[530px] w-full flex items-center justify-center touch-pan-y"
+        style={{ perspective: "1200px", touchAction: "pan-y" }}
       >
         {cards.map(({ offset, virtualIndex, item }) => {
           const cfg = SLOT_CONFIG[String(offset)];
@@ -162,7 +245,7 @@ export default function CoverflowCarousel({ items = [] }) {
           return (
             <motion.div
               key={virtualIndex}
-              className="absolute w-[240px] xs:w-[280px] sm:w-[340px] md:w-[380px] h-[340px] xs:h-[380px] sm:h-[440px] md:h-[480px] transform-gpu"
+              className="absolute w-[240px] xs:w-[280px] sm:w-[340px] md:w-[380px] h-[340px] xs:h-[380px] sm:h-[440px] md:h-[480px] transform-gpu touch-pan-y"
               style={{
                 willChange: "transform, opacity",
                 cursor: "pointer",
@@ -170,6 +253,7 @@ export default function CoverflowCarousel({ items = [] }) {
                 backfaceVisibility: "hidden",
                 transform: "translateZ(0)",
                 contain: "layout style",
+                touchAction: "pan-y",
               }}
               initial={false}
               animate={{
@@ -187,13 +271,17 @@ export default function CoverflowCarousel({ items = [] }) {
                 zIndex: { duration: 0 },
               }}
               onClick={() => {
+                if (hasMovedRef.current) {
+                  hasMovedRef.current = false;
+                  return;
+                }
                 if (offset === 0) {
                   setSelectedMedia(item);
                 } else {
                   setActiveIndex((prev) => prev + offset);
                 }
               }}
-              drag={isCenter ? "x" : false}
+              drag={!isMobile && isCenter ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.15}
               onDragEnd={(_, { offset: d }) => {
