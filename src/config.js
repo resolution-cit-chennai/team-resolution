@@ -3,6 +3,10 @@
 // Phone numbers shown in the footer "Questions?" block.
 export const CONTACT_NUMBERS = [
   {
+    label: "Staff Coordinator - Senthil Sir",
+    number: import.meta.env.VITE_QUERY_PHONE_4 || "+91 00000 00000"
+  },
+  {
     label: "Dharshan",
     number: import.meta.env.VITE_QUERY_PHONE_1 || "+91 00000 00000",
   },
